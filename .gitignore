@@ -1,10 +1,5 @@
 node_modules
 dist
 coverage
-.yarn/*
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/patches
 .pnp.*
 .idea
