@@ -1,4 +1,4 @@
-import {parseEmbeds} from './parseEmbeds';
+import {parseEmbeds} from '../../tools/parseEmbeds';
 
 describe('parseEmbeds', () => {
     it('returns empty array for body without embed tags', () => {
@@ -284,6 +284,42 @@ describe('parseEmbeds', () => {
         expect(result[0]).toMatchObject({type: 'video', embed_id: 1});
         expect(result[1]).toMatchObject({type: 'last', last_type: 'documents', count: 3});
         expect(result[2]).toMatchObject({type: 'audio', embed_id: 2});
+    });
+
+    it('ignores collapse embed with invalid JSON', () => {
+        const body = '<!--vps:embed:collapse:[invalid json here]-->';
+        const result = parseEmbeds(body);
+        expect(result).toHaveLength(0);
+    });
+
+    it('ignores collapse embed when JSON items are missing title/body fields', () => {
+        const body = '<!--vps:embed:collapse:[{"foo":"bar","baz":"qux"}]-->';
+        const result = parseEmbeds(body);
+        expect(result).toHaveLength(0);
+    });
+
+    it('ignores youtube embed with empty url after trim', () => {
+        const body = '<!--vps:embed:youtube:-->';
+        const result = parseEmbeds(body);
+        expect(result).toHaveLength(0);
+    });
+
+    it('ignores last embed when count is zero', () => {
+        const body = '<!--vps:embed:last:images:0-->';
+        const result = parseEmbeds(body);
+        expect(result).toHaveLength(0);
+    });
+
+    it('ignores carousel embed with invalid JSON items', () => {
+        const body = '<!--vps:embed:carousel:[invalid]:true:true:500-->';
+        const result = parseEmbeds(body);
+        expect(result).toHaveLength(0);
+    });
+
+    it('ignores carousel embed when JSON items are missing title/body', () => {
+        const body = '<!--vps:embed:carousel:[{"x":1}]:false:false:300-->';
+        const result = parseEmbeds(body);
+        expect(result).toHaveLength(0);
     });
 });
 

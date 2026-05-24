@@ -92,7 +92,7 @@ export function MusicDataEmbed({identifier}: MusicDataEmbedProps) {
 
     return (
         <div style={{margin: '24px 0'}}>
-            <Space direction="vertical" size={12} style={{width: '100%'}}>
+            <Space orientation={"vertical"} size={12} style={{width: '100%'}}>
                 <Typography.Title level={4} style={{margin: 0}}>Music library</Typography.Title>
                 <Input.Search
                     placeholder="Search artist, album, track, genre or year"
