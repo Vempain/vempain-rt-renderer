@@ -2,7 +2,7 @@
   "name": "@vempain/vempain-rt-renderer",
   "version": "0.1.0",
   "description": "Vempain rich text page/embed renderer component library",
-  "author": "Paul-Erik Torronen",
+  "author" : "Paul-Erik Törrönen",
   "license": "GPL-2.0",
   "type": "module",
   "packageManager": "yarn@4.13.0",
