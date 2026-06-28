@@ -31,3 +31,8 @@ class ResizeObserverMock {
 
 (globalThis as { ResizeObserver?: typeof ResizeObserverMock }).ResizeObserver = ResizeObserverMock;
 
+const originalGetComputedStyle = window.getComputedStyle.bind(window);
+Object.defineProperty(window, 'getComputedStyle', {
+    writable: true,
+    value: (element: Element, pseudoElt?: string) => originalGetComputedStyle(element, pseudoElt ? undefined : pseudoElt),
+});

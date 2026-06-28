@@ -2,7 +2,7 @@ export default {
     preset: 'ts-jest',
     testEnvironment: 'jest-environment-jsdom',
     transform: {
-        '^.+\\.(ts|tsx)$': ['ts-jest', {
+        '^.+\\.[tj]sx?$': ['ts-jest', {
             tsconfig: 'tsconfig.jest.json',
             diagnostics: false,
         }],
@@ -19,6 +19,4 @@ export default {
         '<rootDir>/src/**/*.(spec|test).[jt]s?(x)',
     ],
     testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-    forceExit: true,
 };
-

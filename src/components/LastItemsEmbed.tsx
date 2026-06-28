@@ -1,4 +1,4 @@
-import {Card, Col, List, Row, Spin, Typography} from 'antd';
+import {Card, Col, Row, Spin, Typography} from 'antd';
 import {useEffect, useRef, useState} from 'react';
 import {Link as RouterLink} from 'react-router-dom';
 import {useRendererRuntime} from '../runtime/RendererProvider';
@@ -218,20 +218,28 @@ export function LastItemsEmbed({lastType, count}: LastItemsEmbedProps) {
             )}
             {!error && lastType !== 'pages' && (
                 <>
-                    <List
-                        size="small"
-                        dataSource={items}
-                        renderItem={(item) => (
-                            <List.Item>
+                    <div role="list" style={{display: 'grid', gap: 8}}>
+                        {items.map((item, index) => (
+                            <div
+                                key={`last-${lastType}-${item.id ?? index}`}
+                                role="listitem"
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    gap: 12,
+                                    alignItems: 'baseline',
+                                    borderBottom: '1px solid rgba(5, 5, 5, 0.06)',
+                                    paddingBottom: 8,
+                                }}
+                            >
                                 {renderNavLink(getItemLink(item), item.title)}
                                 <Text type="secondary">{formatPublished(item.published)}</Text>
-                            </List.Item>
-                        )}
-                    />
+                            </div>
+                        ))}
+                    </div>
                     <div style={{marginTop: 8}}>{renderNavLink(allLink, `View all ${lastType}`)}</div>
                 </>
             )}
         </Spin>
     );
 }
-

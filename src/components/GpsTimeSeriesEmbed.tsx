@@ -1,10 +1,5 @@
 import {Alert, Empty, Spin, Typography} from 'antd';
-import L, {
-    type DivIcon,
-    type LatLngBoundsExpression,
-    type Map as LeafletMap,
-    type Marker as LeafletMarker
-} from 'leaflet';
+import L, {type DivIcon, type LatLngBoundsExpression, type Map as LeafletMap, type Marker as LeafletMarker} from 'leaflet';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {MapContainer, Marker, Polyline, Popup, TileLayer, useMap} from 'react-leaflet';
 import {useRendererRuntime} from '../runtime/RendererProvider';
@@ -253,9 +248,9 @@ export default function GpsTimeSeriesEmbed({identifier}: GpsTimeSeriesEmbedProps
     return (
         <div style={{margin: '24px 0'}}>
             <Typography.Title level={4} style={{marginBottom: 12}}>Kuvaston reitti</Typography.Title>
-            {trackError && <Alert type="warning" message={trackError} style={{marginBottom: 12}}/>}
-            {clusterError && <Alert type="error" message={clusterError} style={{marginBottom: 12}}/>}
-            {expansionError && <Alert type="warning" message={expansionError} style={{marginBottom: 12}}/>}
+            {trackError && <Alert type="warning" title={trackError} style={{marginBottom: 12}}/>}
+            {clusterError && <Alert type="error" title={clusterError} style={{marginBottom: 12}}/>}
+            {expansionError && <Alert type="warning" title={expansionError} style={{marginBottom: 12}}/>}
             <div style={{height: 520, borderRadius: 8, overflow: 'hidden'}}>
                 <MapContainer bounds={mapBounds} style={{width: '100%', height: '100%'}} scrollWheelZoom>
                     <TileLayer
@@ -300,4 +295,3 @@ export default function GpsTimeSeriesEmbed({identifier}: GpsTimeSeriesEmbedProps
         </div>
     );
 }
-

@@ -111,3 +111,5 @@ Build output goes to `dist/`; test files and `setupTests.ts` are excluded from t
   `src/__tests__/tools/` for parser tests).
 - All tasks must always be validated by running the test suite, coverage and linting before pushing commits or creating pull requests. Use `yarn test`,
   `yarn test:coverage` and `yarn lint` for this purpose. If you want to automatically fix linting issues, you can use `yarn lint:fix`.
+- Treat all deprecation warnings as required maintenance work: whenever `yarn test`, `yarn test:coverage`, `yarn lint`, or build output reports deprecated
+  APIs/props/behavior, update the implementation and tests immediately so no deprecation warnings remain.

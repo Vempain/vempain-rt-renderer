@@ -2,10 +2,10 @@
   "name": "@vempain/vempain-rt-renderer",
   "version": "0.1.0",
   "description": "Vempain rich text page/embed renderer component library",
-  "author" : "Paul-Erik Törrönen",
+  "author": "Paul-Erik Törrönen",
   "license": "GPL-2.0",
   "type": "module",
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.16.0",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -19,9 +19,9 @@
     "dist"
   ],
   "scripts": {
-    "prebuild" : "node generateBuildInfo.js",
+    "prebuild": "node generateBuildInfo.js",
     "build": "tsc -p tsconfig.build.json",
-    "build:production" : "yarn prebuild && tsc -p tsconfig.build.json",
+    "build:production": "yarn prebuild && tsc -p tsconfig.build.json",
     "clean": "rm -rf dist",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -45,28 +45,28 @@
     "@testing-library/react": "^16.3.2",
     "@types/jest": "^30.0.0",
     "@types/leaflet": "^1.9.21",
-    "@types/react": "^19.2.15",
+    "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "antd": "^6.4.3",
-    "eslint": "^10.4.0",
+    "antd": "^6.4.5",
+    "eslint": "^10.6.0",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-refresh": "^0.5.2",
-    "globals": "^17.6.0",
+    "eslint-plugin-react-refresh": "^0.5.3",
+    "globals": "^17.7.0",
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
     "leaflet": "^1.9.4",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "react-leaflet": "^5.0.0",
     "react-player": "^3.4.0",
-    "react-router-dom": "^7.15.1",
+    "react-router-dom": "^7.18.0",
     "ts-jest": "^29.4.11",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.59.4"
+    "typescript-eslint": "^8.62.0"
   },
-  "repository" : {
-    "type" : "git",
-    "url" : "git+https://github.com/Vempain/vempain-rt-renderer.git"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vempain/vempain-rt-renderer.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"

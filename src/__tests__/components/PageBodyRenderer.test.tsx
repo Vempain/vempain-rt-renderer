@@ -3,6 +3,11 @@ import {MemoryRouter} from 'react-router-dom';
 import {PageBodyRenderer} from '../../components/PageBodyRenderer';
 import {RendererProvider, type RendererRuntime} from '../../runtime/RendererProvider';
 
+jest.mock('../../components/GpsTimeSeriesEmbed', () => ({
+    __esModule: true,
+    default: () => <div data-testid="gps-time-series-embed">Mock GPS Time Series</div>,
+}));
+
 const runtime: RendererRuntime = {
     fileAPI: {
         getFileUrl: (filePath: string) => `/file/${filePath}`,
@@ -160,11 +165,8 @@ describe('PageBodyRenderer', () => {
     });
 
     it('renders GpsTimeSeriesEmbed suspense fallback initially for gps_timeseries type', async () => {
-        const {container} = wrap(
-                <PageBodyRenderer body="<!--vps:embed:gps_timeseries:my_track-->"/>
-        );
-        // During initial load, at minimum the container renders without error
-        expect(container).toBeTruthy();
+        wrap(<PageBodyRenderer body="<!--vps:embed:gps_timeseries:my_track-->"/>);
+        expect(await screen.findByTestId('gps-time-series-embed')).toBeInTheDocument();
     });
 
     it('renders multiple embeds interleaved with HTML', async () => {
@@ -191,4 +193,3 @@ describe('PageBodyRenderer', () => {
         expect(screen.getByText('Tail text')).toBeInTheDocument();
     });
 });
-

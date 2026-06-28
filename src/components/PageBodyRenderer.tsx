@@ -50,7 +50,7 @@ export function PageBodyRenderer({body, pageTitle = '', renderGallery}: PageBody
                     key={`gallery-${embed.embed_id}-${index}`}>{renderGallery(embed.embed_id, index)}</React.Fragment>);
             } else {
                 segments.push(<Alert key={`gallery-missing-${embed.embed_id}-${index}`} type="info"
-                                     message={`Gallery ${embed.embed_id} renderer missing`}/>);
+                                     title={`Gallery ${embed.embed_id} renderer missing`}/>);
             }
         } else if (embed.type === 'image' && embed.embed_id) {
             segments.push(<ImageEmbed key={`image-${embed.embed_id}-${index}`} fileId={embed.embed_id}/>);
@@ -98,4 +98,3 @@ export function PageBodyRenderer({body, pageTitle = '', renderGallery}: PageBody
 
     return <>{segments}</>;
 }
-
