@@ -13,6 +13,7 @@ export {AudioEmbed} from './components/AudioEmbed';
 export {MusicDataEmbed} from './components/MusicDataEmbed';
 export {YouTubeEmbed} from './components/YouTubeEmbed';
 export {LastItemsEmbed} from './components/LastItemsEmbed';
+export {WordCloudEmbed} from './components/WordCloudEmbed';
 export {default as GpsTimeSeriesEmbed} from './components/GpsTimeSeriesEmbed';
 
 export type {
@@ -31,5 +32,6 @@ export type {
     MusicDataResponse,
     MusicDataRow,
     PageEmbed,
+    WordCloudEmbedDataItem,
+    WordCloudEmbedOptions,
 } from './types';
-

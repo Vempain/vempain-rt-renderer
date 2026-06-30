@@ -9,6 +9,7 @@ import {ImageEmbed} from './ImageEmbed';
 import {LastItemsEmbed} from './LastItemsEmbed';
 import {MusicDataEmbed} from './MusicDataEmbed';
 import {VideoEmbed} from './VideoEmbed';
+import {WordCloudEmbed} from './WordCloudEmbed';
 import {YouTubeEmbed} from './YouTubeEmbed';
 
 const LazyGpsTimeSeriesEmbed = lazy(() => import('./GpsTimeSeriesEmbed'));
@@ -65,6 +66,8 @@ export function PageBodyRenderer({body, pageTitle = '', renderGallery}: PageBody
             segments.push(<YouTubeEmbed key={`youtube-${index}`} url={embed.youtube_url}/>);
         } else if (embed.type === 'music' && embed.identifier) {
             segments.push(<MusicDataEmbed key={`music-${embed.identifier}-${index}`} identifier={embed.identifier}/>);
+        } else if (embed.type === 'word_cloud' && embed.word_cloud_options) {
+            segments.push(<WordCloudEmbed key={`word-cloud-${index}`} options={embed.word_cloud_options}/>);
         } else if (embed.type === 'gps_timeseries' && embed.identifier) {
             segments.push(
                 <Suspense key={`gps-${embed.identifier}-${index}`} fallback={<div>Loading GPS map...</div>}>
