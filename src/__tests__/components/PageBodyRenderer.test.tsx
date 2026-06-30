@@ -8,6 +8,11 @@ jest.mock('../../components/GpsTimeSeriesEmbed', () => ({
     default: () => <div data-testid="gps-time-series-embed">Mock GPS Time Series</div>,
 }));
 
+jest.mock('../../components/WordCloudEmbed', () => ({
+    __esModule: true,
+    WordCloudEmbed: () => <div data-testid="word-cloud-embed">Mock Word Cloud</div>,
+}));
+
 const runtime: RendererRuntime = {
     fileAPI: {
         getFileUrl: (filePath: string) => `/file/${filePath}`,
@@ -144,6 +149,11 @@ describe('PageBodyRenderer', () => {
         wrap(<PageBodyRenderer body="<!--vps:embed:last:images:5-->"/>);
         await flush();
         expect(screen.getByText('View all images')).toBeInTheDocument();
+    });
+
+    it('renders WordCloudEmbed for word_cloud type', () => {
+        wrap(<PageBodyRenderer body='<!--vps:embed:word_cloud:{"shape":"circle","data":[{"text":"nature","value":9}]}-->'/>);
+        expect(screen.getByTestId('word-cloud-embed')).toBeInTheDocument();
     });
 
     it('renders CollapseEmbed for collapse type', () => {

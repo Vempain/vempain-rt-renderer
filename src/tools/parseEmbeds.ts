@@ -1,4 +1,4 @@
-import type {EmbedItem, LastEmbedType, PageEmbed} from '../types';
+import type {EmbedItem, LastEmbedType, PageEmbed, WordCloudEmbedOptions} from '../types';
 
 function tryParseItemsJson(json: string): EmbedItem[] | null {
     try {
@@ -9,6 +9,19 @@ function tryParseItemsJson(json: string): EmbedItem[] | null {
                 'title' in item && 'body' in item
         )) {
             return parsed as EmbedItem[];
+        }
+
+    } catch {
+        // Not valid JSON.
+    }
+    return null;
+}
+
+function tryParseWordCloudOptions(json: string): WordCloudEmbedOptions | null {
+    try {
+        const parsed = JSON.parse(json);
+        if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
+            return parsed as WordCloudEmbedOptions;
         }
     } catch {
         // Not valid JSON.
@@ -45,6 +58,22 @@ export function parseEmbeds(body: string): PageEmbed[] {
             if (identifier !== '') {
                 matchesWithIndex.push({
                     embed: {type, identifier, placeholder: m[0]},
+                    index: m.index,
+                });
+            }
+        }
+    }
+
+    const wordCloudLiteral = /<!--\s*vps:embed:word_cloud:(?<options>\{[\s\S]*?})\s*-->/ig;
+    const wordCloudEncoded = /&lt;!--\s*vps:embed:word_cloud:(?<options>\{[\s\S]*?})\s*--&gt;/ig;
+
+    for (const pattern of [wordCloudLiteral, wordCloudEncoded]) {
+        let m: RegExpExecArray | null;
+        while ((m = pattern.exec(body)) !== null) {
+            const options = tryParseWordCloudOptions(m.groups?.options ?? '');
+            if (options !== null) {
+                matchesWithIndex.push({
+                    embed: {type: 'word_cloud', word_cloud_options: options, placeholder: m[0]},
                     index: m.index,
                 });
             }
@@ -138,4 +167,3 @@ export function parseEmbeds(body: string): PageEmbed[] {
 
     return deduped.map(({embed}) => embed);
 }
-

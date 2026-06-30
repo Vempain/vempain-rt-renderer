@@ -258,6 +258,33 @@ describe('parseEmbeds', () => {
         });
     });
 
+    it('parses a word cloud embed tag with JSON options and data', () => {
+        const body = '<!--vps:embed:word_cloud:{"shape":"circle","fontSize":[12,48],"data":[{"text":"nature","value":14}]}-->';
+        const result = parseEmbeds(body);
+        expect(result).toHaveLength(1);
+        expect(result[0]).toMatchObject({
+            type: 'word_cloud',
+            word_cloud_options: {
+                shape: 'circle',
+                fontSize: [12, 48],
+                data: [{text: 'nature', value: 14}],
+            },
+        });
+    });
+
+    it('parses an encoded word cloud embed tag', () => {
+        const body = '&lt;!--vps:embed:word_cloud:{"shape":"diamond","data":[{"text":"travel","value":7}]}--&gt;';
+        const result = parseEmbeds(body);
+        expect(result).toHaveLength(1);
+        expect(result[0]).toMatchObject({
+            type: 'word_cloud',
+            word_cloud_options: {
+                shape: 'diamond',
+                data: [{text: 'travel', value: 7}],
+            },
+        });
+    });
+
     it('parses an encoded last-items embed tag', () => {
         const body = '&lt;!--vps:embed:last:pages:5--&gt;';
         const result = parseEmbeds(body);
@@ -322,4 +349,3 @@ describe('parseEmbeds', () => {
         expect(result).toHaveLength(0);
     });
 });
-

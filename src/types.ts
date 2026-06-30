@@ -15,6 +15,7 @@ export interface PageEmbed {
     type: string;
     embed_id?: number;
     identifier?: string;
+    word_cloud_options?: WordCloudEmbedOptions;
     placeholder?: string;
     autoplay?: boolean;
     dot_duration?: boolean;
@@ -125,3 +126,12 @@ export interface LastItemsResponse {
     items: LastItemsResponseItem[];
 }
 
+export interface WordCloudEmbedDataItem {
+    text: string;
+    value: number;
+}
+
+export interface WordCloudEmbedOptions {
+    data?: WordCloudEmbedDataItem[];
+    [key: string]: unknown;
+}
