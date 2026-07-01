@@ -14,6 +14,7 @@ export {MusicDataEmbed} from './components/MusicDataEmbed';
 export {YouTubeEmbed} from './components/YouTubeEmbed';
 export {LastItemsEmbed} from './components/LastItemsEmbed';
 export {WordCloudEmbed} from './components/WordCloudEmbed';
+export {TodayRandomEmbed} from './components/TodayRandomEmbed';
 export {default as GpsTimeSeriesEmbed} from './components/GpsTimeSeriesEmbed';
 
 export type {
@@ -32,6 +33,9 @@ export type {
     MusicDataResponse,
     MusicDataRow,
     PageEmbed,
+    TodayRandomEmbedImageItem,
+    TodayRandomEmbedOptions,
+    TodayRandomEmbedPageItem,
     WordCloudEmbedDataItem,
     WordCloudEmbedOptions,
 } from './types';

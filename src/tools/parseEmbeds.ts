@@ -1,4 +1,4 @@
-import type {EmbedItem, LastEmbedType, PageEmbed, WordCloudEmbedOptions} from '../types';
+import type {EmbedItem, LastEmbedType, PageEmbed, TodayRandomEmbedOptions, WordCloudEmbedOptions} from '../types';
 
 function tryParseItemsJson(json: string): EmbedItem[] | null {
     try {
@@ -22,6 +22,18 @@ function tryParseWordCloudOptions(json: string): WordCloudEmbedOptions | null {
         const parsed = JSON.parse(json);
         if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
             return parsed as WordCloudEmbedOptions;
+        }
+    } catch {
+        // Not valid JSON.
+    }
+    return null;
+}
+
+function tryParseTodayRandomOptions(json: string): TodayRandomEmbedOptions | null {
+    try {
+        const parsed = JSON.parse(json);
+        if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
+            return parsed as TodayRandomEmbedOptions;
         }
     } catch {
         // Not valid JSON.
@@ -74,6 +86,22 @@ export function parseEmbeds(body: string): PageEmbed[] {
             if (options !== null) {
                 matchesWithIndex.push({
                     embed: {type: 'word_cloud', word_cloud_options: options, placeholder: m[0]},
+                    index: m.index,
+                });
+            }
+        }
+    }
+
+    const todayRandomLiteral = /<!--\s*vps:embed:today_random:(?<options>\{[\s\S]*?})\s*-->/ig;
+    const todayRandomEncoded = /&lt;!--\s*vps:embed:today_random:(?<options>\{[\s\S]*?})\s*--&gt;/ig;
+
+    for (const pattern of [todayRandomLiteral, todayRandomEncoded]) {
+        let m: RegExpExecArray | null;
+        while ((m = pattern.exec(body)) !== null) {
+            const options = tryParseTodayRandomOptions(m.groups?.options ?? '');
+            if (options !== null) {
+                matchesWithIndex.push({
+                    embed: {type: 'today_random', today_random_options: options, placeholder: m[0]},
                     index: m.index,
                 });
             }
