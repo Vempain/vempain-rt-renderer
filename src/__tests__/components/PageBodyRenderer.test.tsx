@@ -13,6 +13,11 @@ jest.mock('../../components/WordCloudEmbed', () => ({
     WordCloudEmbed: () => <div data-testid="word-cloud-embed">Mock Word Cloud</div>,
 }));
 
+jest.mock('../../components/TodayRandomEmbed', () => ({
+    __esModule: true,
+    TodayRandomEmbed: () => <div data-testid="today-random-embed">Mock Today Random</div>,
+}));
+
 const runtime: RendererRuntime = {
     fileAPI: {
         getFileUrl: (filePath: string) => `/file/${filePath}`,
@@ -154,6 +159,11 @@ describe('PageBodyRenderer', () => {
     it('renders WordCloudEmbed for word_cloud type', () => {
         wrap(<PageBodyRenderer body='<!--vps:embed:word_cloud:{"shape":"circle","data":[{"text":"nature","value":9}]}-->'/>);
         expect(screen.getByTestId('word-cloud-embed')).toBeInTheDocument();
+    });
+
+    it('renders TodayRandomEmbed for today_random type', () => {
+        wrap(<PageBodyRenderer body='<!--vps:embed:today_random:{"images":[{"id":1,"title":"A","file_path":"a.jpg"}]}-->'/>);
+        expect(screen.getByTestId('today-random-embed')).toBeInTheDocument();
     });
 
     it('renders CollapseEmbed for collapse type', () => {

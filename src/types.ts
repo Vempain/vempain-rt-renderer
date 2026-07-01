@@ -16,6 +16,7 @@ export interface PageEmbed {
     embed_id?: number;
     identifier?: string;
     word_cloud_options?: WordCloudEmbedOptions;
+    today_random_options?: TodayRandomEmbedOptions;
     placeholder?: string;
     autoplay?: boolean;
     dot_duration?: boolean;
@@ -133,5 +134,27 @@ export interface WordCloudEmbedDataItem {
 
 export interface WordCloudEmbedOptions {
     data?: WordCloudEmbedDataItem[];
+    [key: string]: unknown;
+}
+
+export interface TodayRandomEmbedImageItem {
+    id: number;
+    title: string;
+    file_path: string;
+    published: string | null;
+}
+
+export interface TodayRandomEmbedPageItem {
+    id: number;
+    title: string;
+    header: string | null;
+    file_path: string;
+    published: string | null;
+}
+
+export interface TodayRandomEmbedOptions {
+    images?: TodayRandomEmbedImageItem[];
+    pages?: TodayRandomEmbedPageItem[];
+
     [key: string]: unknown;
 }

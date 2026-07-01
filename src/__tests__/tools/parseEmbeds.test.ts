@@ -285,6 +285,31 @@ describe('parseEmbeds', () => {
         });
     });
 
+    it('parses a today-random embed tag with images and pages', () => {
+        const body = '<!--vps:embed:today_random:{"images":[{"id":1,"title":"A","file_path":"a.jpg","published":"2024-01-01"}],"pages":[{"id":10,"title":"Page A","header":"Intro","file_path":"page-a","published":"2024-01-01"}]}-->';
+        const result = parseEmbeds(body);
+        expect(result).toHaveLength(1);
+        expect(result[0]).toMatchObject({
+            type: 'today_random',
+            today_random_options: {
+                images: [{id: 1, title: 'A', file_path: 'a.jpg', published: '2024-01-01'}],
+                pages: [{id: 10, title: 'Page A', header: 'Intro', file_path: 'page-a', published: '2024-01-01'}],
+            },
+        });
+    });
+
+    it('parses an encoded today-random embed tag', () => {
+        const body = '&lt;!--vps:embed:today_random:{"images":[{"id":2,"title":"B","file_path":"b.jpg"}]}--&gt;';
+        const result = parseEmbeds(body);
+        expect(result).toHaveLength(1);
+        expect(result[0]).toMatchObject({
+            type: 'today_random',
+            today_random_options: {
+                images: [{id: 2, title: 'B', file_path: 'b.jpg'}],
+            },
+        });
+    });
+
     it('parses an encoded last-items embed tag', () => {
         const body = '&lt;!--vps:embed:last:pages:5--&gt;';
         const result = parseEmbeds(body);
