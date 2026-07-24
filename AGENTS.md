@@ -3,6 +3,8 @@
 Reusable React component library (published as `@vempain/vempain-rt-renderer` to GitHub Packages) that parses and renders Vempain rich-text page bodies
 containing `<!--vps:embed:…-->` tags.
 
+- Public usage docs are mirrored in `vempain-site`; keep `RendererProvider`, `PageBodyRenderer`, and the exported embed component props in sync with those docs.
+
 ---
 
 ## Architecture overview

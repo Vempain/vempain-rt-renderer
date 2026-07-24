@@ -11,7 +11,7 @@ import type {
 } from '../types';
 
 export interface RendererPageApi {
-    getPublicFileById(id: number): Promise<ApiResponse<{ file_path?: string | null }>>;
+    getPublicFileById(id: number): Promise<ApiResponse<{ file_path?: string | null; thumbnail_path?: string | null }>>;
 
     getLastItems(type: LastEmbedType, count: number): Promise<ApiResponse<LastItemsResponse>>;
 

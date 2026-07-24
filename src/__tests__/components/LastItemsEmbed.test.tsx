@@ -60,12 +60,15 @@ describe('LastItemsEmbed – pages type', () => {
         const getLastItems = jest.fn().mockResolvedValue(makeResponse('pages', [
             {id: 2, title: 'Hero Page', published: '2025-03-01', file_path: '/page/hero', body: heroBody, header: 'Header text'},
         ]));
-        const getPublicFileById = jest.fn().mockResolvedValue({data: {file_path: 'hero.jpg'}});
+        const getPublicFileById = jest.fn().mockResolvedValue({data: {file_path: 'hero.jpg', thumbnail_path: 'hero_thumb.jpg'}});
         renderWithAll('pages', 5, getLastItems, getPublicFileById);
         await flush();
         await waitFor(() => {
             expect(getPublicFileById).toHaveBeenCalledWith(42);
         });
+        // Should prefer thumbnail
+        const thumb = document.querySelector('img[src="/files/hero_thumb.jpg"]');
+        expect(thumb).toBeInTheDocument();
     });
 
     it('renders page item without hero when body has no hero embed', async () => {
@@ -166,13 +169,16 @@ describe('LastItemsEmbed – pages type', () => {
 describe('LastItemsEmbed – non-pages types', () => {
     it('renders images list with items', async () => {
         const getLastItems = jest.fn().mockResolvedValue(makeResponse('images', [
-            {id: 20, title: 'Image One', published: '2025-01-01', file_path: 'img/one.jpg'},
-            {id: 21, title: 'Image Two', published: '2025-02-01', file_path: 'img/two.jpg'},
+            {id: 20, title: 'Image One', published: '2025-01-01', file_path: 'img/one.jpg', thumbnail_path: 'img/one_thumb.jpg'},
+            {id: 21, title: 'Image Two', published: '2025-02-01', file_path: 'img/two.jpg', thumbnail_path: null},
         ]));
         renderWithAll('images', 10, getLastItems);
         await flush();
         expect(screen.getByText('Image One')).toBeInTheDocument();
         expect(screen.getByText('Image Two')).toBeInTheDocument();
+        // Verify thumbnail for Image One
+        const thumb = document.querySelector('img[src="/files/img/one_thumb.jpg"]');
+        expect(thumb).toBeInTheDocument();
     });
 
     it('renders "View all images" link', async () => {
