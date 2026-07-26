@@ -91,41 +91,41 @@ export function MusicDataEmbed({identifier}: MusicDataEmbedProps) {
     }), [page, pageSize, total]);
 
     return (
-        <div style={{margin: '24px 0'}}>
-            <Space orientation="vertical" size={12} style={{width: '100%'}}>
-                <Typography.Title level={4} style={{margin: 0}}>Music library</Typography.Title>
-                <Input.Search
-                    placeholder="Search artist, album, track, genre or year"
-                    value={searchInput}
-                    onChange={(event) => setSearchInput(event.target.value)}
-                    onSearch={() => {
-                        setPage(0);
-                        setSearch(searchInput.trim());
-                    }}
-                    allowClear
-                    enterButton
-                />
-                {error && <Alert type="error" title={error}/>}
-                <Table<MusicDataRow>
-                    rowKey={(record) => record.id}
-                    loading={loading}
-                    columns={columns}
-                    dataSource={rows}
-                    pagination={tablePagination}
-                    onChange={(pagination, _filters, sorter) => {
-                        const nextSorter = Array.isArray(sorter) ? sorter[0] : sorter as SorterResult<MusicDataRow>;
-                        setPage((pagination.current ?? 1) - 1);
-                        setPageSize(pagination.pageSize ?? 25);
-                        if (nextSorter?.field && typeof nextSorter.field === 'string') {
-                            setSortBy(nextSorter.field);
-                            setDirection(nextSorter.order === 'descend' ? 'desc' : 'asc');
-                        }
-                    }}
-                    scroll={{x: true}}
-                    size="small"
-                />
-                <Text type="secondary">Showing dataset: {identifier}</Text>
-            </Space>
-        </div>
+            <div style={{margin: '24px 0'}}>
+                <Space orientation="vertical" size={12} style={{width: '100%'}}>
+                    <Typography.Title level={4} style={{margin: 0}}>Music library</Typography.Title>
+                    <Input.Search
+                            placeholder="Search artist, album, track, genre or year"
+                            value={searchInput}
+                            onChange={(event) => setSearchInput(event.target.value)}
+                            onSearch={() => {
+                                setPage(0);
+                                setSearch(searchInput.trim());
+                            }}
+                            allowClear
+                            enterButton
+                    />
+                    {error && <Alert type="error" title={error}/>}
+                    <Table<MusicDataRow>
+                            rowKey={(record) => record.id}
+                            loading={loading}
+                            columns={columns}
+                            dataSource={rows}
+                            pagination={tablePagination}
+                            onChange={(pagination, _filters, sorter) => {
+                                const nextSorter = Array.isArray(sorter) ? sorter[0] : sorter as SorterResult<MusicDataRow>;
+                                setPage((pagination.current ?? 1) - 1);
+                                setPageSize(pagination.pageSize ?? 25);
+                                if (nextSorter?.field && typeof nextSorter.field === 'string') {
+                                    setSortBy(nextSorter.field);
+                                    setDirection(nextSorter.order === 'descend' ? 'desc' : 'asc');
+                                }
+                            }}
+                            scroll={{x: true}}
+                            size="small"
+                    />
+                    <Text type="secondary">Showing dataset: {identifier}</Text>
+                </Space>
+            </div>
     );
 }

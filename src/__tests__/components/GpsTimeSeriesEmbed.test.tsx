@@ -68,7 +68,7 @@ jest.mock('react-leaflet', () => {
         Marker: MockMarker,
         Popup: ({children}: { children?: React.ReactNode }) => <div data-testid="popup">{children}</div>,
         Polyline: ({positions}: { positions: Array<[number, number]> }) => (
-            <div data-testid="gps-track-polyline" data-points={JSON.stringify(positions)}/>
+                <div data-testid="gps-track-polyline" data-points={JSON.stringify(positions)}/>
         ),
         useMap: () => mockMap,
         __esModule: true,
@@ -173,9 +173,9 @@ describe('GpsTimeSeriesEmbed', () => {
     async function renderAndFlush(identifier = 'gps_timeseries_trip') {
         await act(async () => {
             root.render(
-                <RendererProvider value={runtime}>
-                    <GpsTimeSeriesEmbed identifier={identifier}/>
-                </RendererProvider>
+                    <RendererProvider value={runtime}>
+                        <GpsTimeSeriesEmbed identifier={identifier}/>
+                    </RendererProvider>
             );
         });
         await act(async () => {

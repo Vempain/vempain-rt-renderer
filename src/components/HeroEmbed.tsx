@@ -17,22 +17,22 @@ export function HeroEmbed({fileId, title}: HeroEmbedProps) {
         activeRef.current = true;
 
         pageAPI.getPublicFileById(fileId)
-            .then((response) => {
-                if (!activeRef.current) return;
-                const filePath = response.data?.file_path;
-                if (filePath) {
-                    setSrc(fileAPI.getFileUrl(filePath));
-                }
-            })
-            .catch(() => {
-                if (!activeRef.current) return;
-                setSrc(null);
-            })
-            .finally(() => {
-                if (activeRef.current) {
-                    setLoading(false);
-                }
-            });
+                .then((response) => {
+                    if (!activeRef.current) return;
+                    const filePath = response.data?.file_path;
+                    if (filePath) {
+                        setSrc(fileAPI.getFileUrl(filePath));
+                    }
+                })
+                .catch(() => {
+                    if (!activeRef.current) return;
+                    setSrc(null);
+                })
+                .finally(() => {
+                    if (activeRef.current) {
+                        setLoading(false);
+                    }
+                });
 
         return () => {
             activeRef.current = false;
@@ -40,25 +40,25 @@ export function HeroEmbed({fileId, title}: HeroEmbedProps) {
     }, [fileAPI, fileId, pageAPI]);
 
     return (
-        <Spin spinning={loading}>
-            {src && (
-                <div style={{position: 'relative', width: '100%'}}>
-                    <img src={src} alt={title} style={{width: '100%', height: 'auto', display: 'block'}}/>
-                    <div
-                        style={{
-                            position: 'absolute',
-                            inset: 0,
-                            background: 'rgba(0, 0, 0, 0.45)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}
-                    >
-                        <h1 style={{color: '#fff', margin: 0, textAlign: 'center', padding: '0 16px'}}>{title}</h1>
-                    </div>
-                </div>
-            )}
-        </Spin>
+            <Spin spinning={loading}>
+                {src && (
+                        <div style={{position: 'relative', width: '100%'}}>
+                            <img src={src} alt={title} style={{width: '100%', height: 'auto', display: 'block'}}/>
+                            <div
+                                    style={{
+                                        position: 'absolute',
+                                        inset: 0,
+                                        background: 'rgba(0, 0, 0, 0.45)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                            >
+                                <h1 style={{color: '#fff', margin: 0, textAlign: 'center', padding: '0 16px'}}>{title}</h1>
+                            </div>
+                        </div>
+                )}
+            </Spin>
     );
 }
 

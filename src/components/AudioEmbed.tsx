@@ -16,22 +16,22 @@ export function AudioEmbed({fileId}: AudioEmbedProps) {
         activeRef.current = true;
 
         pageAPI.getPublicFileById(fileId)
-            .then((response) => {
-                if (!activeRef.current) return;
-                const filePath = response.data?.file_path;
-                if (filePath) {
-                    setSrc(fileAPI.getFileUrl(filePath));
-                }
-            })
-            .catch(() => {
-                if (!activeRef.current) return;
-                setSrc(null);
-            })
-            .finally(() => {
-                if (activeRef.current) {
-                    setLoading(false);
-                }
-            });
+                .then((response) => {
+                    if (!activeRef.current) return;
+                    const filePath = response.data?.file_path;
+                    if (filePath) {
+                        setSrc(fileAPI.getFileUrl(filePath));
+                    }
+                })
+                .catch(() => {
+                    if (!activeRef.current) return;
+                    setSrc(null);
+                })
+                .finally(() => {
+                    if (activeRef.current) {
+                        setLoading(false);
+                    }
+                });
 
         return () => {
             activeRef.current = false;
@@ -39,9 +39,9 @@ export function AudioEmbed({fileId}: AudioEmbedProps) {
     }, [fileAPI, fileId, pageAPI]);
 
     return (
-        <Spin spinning={loading}>
-            {src && <audio src={src} controls style={{maxWidth: '100%', width: '100%'}}/>}
-        </Spin>
+            <Spin spinning={loading}>
+                {src && <audio src={src} controls style={{maxWidth: '100%', width: '100%'}}/>}
+            </Spin>
     );
 }
 

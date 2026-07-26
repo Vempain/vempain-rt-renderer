@@ -13,12 +13,12 @@ describe('WordCloudEmbed', () => {
 
     it('renders chart when valid data is provided', () => {
         render(
-            <WordCloudEmbed
-                options={{
-                    shape: 'diamond',
-                    data: [{text: 'nature', value: 14}],
-                }}
-            />,
+                <WordCloudEmbed
+                        options={{
+                            shape: 'diamond',
+                            data: [{text: 'nature', value: 14}],
+                        }}
+                />,
         );
 
         expect(screen.getByTestId('word-cloud-embed')).toBeInTheDocument();

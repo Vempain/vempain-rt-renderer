@@ -12,18 +12,18 @@ interface CarouselEmbedProps {
 
 export function CarouselEmbed({items, autoplay, dotDuration, speed}: CarouselEmbedProps) {
     const autoplayConfig = autoplay
-        ? (dotDuration ? {dotDuration: true} : true)
-        : false;
+            ? (dotDuration ? {dotDuration: true} : true)
+            : false;
 
     return (
-        <Carousel autoplay={autoplayConfig} speed={speed}>
-            {items.map((item, idx) => (
-                <div key={idx}>
-                    <Title level={3}>{item.title}</Title>
-                    <div dangerouslySetInnerHTML={{__html: item.body ?? ''}}/>
-                </div>
-            ))}
-        </Carousel>
+            <Carousel autoplay={autoplayConfig} speed={speed}>
+                {items.map((item, idx) => (
+                        <div key={idx}>
+                            <Title level={3}>{item.title}</Title>
+                            <div dangerouslySetInnerHTML={{__html: item.body ?? ''}}/>
+                        </div>
+                ))}
+            </Carousel>
     );
 }
 
