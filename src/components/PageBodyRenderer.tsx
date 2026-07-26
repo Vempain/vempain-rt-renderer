@@ -49,7 +49,7 @@ export function PageBodyRenderer({body, pageTitle = '', renderGallery}: PageBody
         if (embed.type === 'gallery' && embed.embed_id) {
             if (renderGallery) {
                 segments.push(<React.Fragment
-                    key={`gallery-${embed.embed_id}-${index}`}>{renderGallery(embed.embed_id, index)}</React.Fragment>);
+                        key={`gallery-${embed.embed_id}-${index}`}>{renderGallery(embed.embed_id, index)}</React.Fragment>);
             } else {
                 segments.push(<Alert key={`gallery-missing-${embed.embed_id}-${index}`} type="info"
                                      title={`Gallery ${embed.embed_id} renderer missing`}/>);
@@ -73,9 +73,9 @@ export function PageBodyRenderer({body, pageTitle = '', renderGallery}: PageBody
             segments.push(<TodayRandomEmbed key={`today-random-${index}`} options={embed.today_random_options}/>);
         } else if (embed.type === 'gps_timeseries' && embed.identifier) {
             segments.push(
-                <Suspense key={`gps-${embed.identifier}-${index}`} fallback={<div>Loading GPS map...</div>}>
-                    <LazyGpsTimeSeriesEmbed identifier={embed.identifier}/>
-                </Suspense>
+                    <Suspense key={`gps-${embed.identifier}-${index}`} fallback={<div>Loading GPS map...</div>}>
+                        <LazyGpsTimeSeriesEmbed identifier={embed.identifier}/>
+                    </Suspense>
             );
         } else if (embed.type === 'last' && embed.last_type && embed.count) {
             segments.push(<LastItemsEmbed key={`last-${embed.last_type}-${index}`} lastType={embed.last_type}
@@ -84,13 +84,13 @@ export function PageBodyRenderer({body, pageTitle = '', renderGallery}: PageBody
             segments.push(<CollapseEmbed key={`collapse-${index}`} items={embed.items}/>);
         } else if (embed.type === 'carousel' && embed.items) {
             segments.push(
-                <CarouselEmbed
-                    key={`carousel-${index}`}
-                    items={embed.items}
-                    autoplay={embed.autoplay ?? false}
-                    dotDuration={embed.dot_duration ?? false}
-                    speed={embed.speed ?? 500}
-                />
+                    <CarouselEmbed
+                            key={`carousel-${index}`}
+                            items={embed.items}
+                            autoplay={embed.autoplay ?? false}
+                            dotDuration={embed.dot_duration ?? false}
+                            speed={embed.speed ?? 500}
+                    />
             );
         }
 

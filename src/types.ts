@@ -135,6 +135,7 @@ export interface WordCloudEmbedDataItem {
 
 export interface WordCloudEmbedOptions {
     data?: WordCloudEmbedDataItem[];
+
     [key: string]: unknown;
 }
 

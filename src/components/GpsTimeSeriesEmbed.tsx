@@ -104,16 +104,16 @@ function ClusterMarker({cluster, onExpand}: {
     }, [cluster, onExpand]);
 
     return (
-        <Marker
-            ref={markerRef}
-            position={[cluster.latitude, cluster.longitude]}
-            icon={buildClusterIcon(cluster.point_count)}
-        >
-            <Popup>
-                {cluster.point_count} GPS points
-                between {cluster.first_timestamp ?? '-'} and {cluster.last_timestamp ?? '-'}
-            </Popup>
-        </Marker>
+            <Marker
+                    ref={markerRef}
+                    position={[cluster.latitude, cluster.longitude]}
+                    icon={buildClusterIcon(cluster.point_count)}
+            >
+                <Popup>
+                    {cluster.point_count} GPS points
+                    between {cluster.first_timestamp ?? '-'} and {cluster.last_timestamp ?? '-'}
+                </Popup>
+            </Marker>
     );
 }
 
@@ -246,52 +246,52 @@ export default function GpsTimeSeriesEmbed({identifier}: GpsTimeSeriesEmbedProps
     }
 
     return (
-        <div style={{margin: '24px 0'}}>
-            <Typography.Title level={4} style={{marginBottom: 12}}>Kuvaston reitti</Typography.Title>
-            {trackError && <Alert type="warning" title={trackError} style={{marginBottom: 12}}/>}
-            {clusterError && <Alert type="error" title={clusterError} style={{marginBottom: 12}}/>}
-            {expansionError && <Alert type="warning" title={expansionError} style={{marginBottom: 12}}/>}
-            <div style={{height: 520, borderRadius: 8, overflow: 'hidden'}}>
-                <MapContainer bounds={mapBounds} style={{width: '100%', height: '100%'}} scrollWheelZoom>
-                    <TileLayer
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    <MapViewportBridge onMapReady={setMapInstance} onViewportChange={loadClusters}/>
-                    {trackPath.length > 1 &&
-                        <Polyline positions={trackPath} color="#52c41a" weight={3} opacity={0.85}/>}
-                    {clusters.map((cluster) => cluster.kind === 'cluster' ? (
-                        <ClusterMarker key={cluster.cluster_key} cluster={cluster} onExpand={handleClusterExpand}/>
-                    ) : (
-                        <Marker key={cluster.cluster_key} position={[cluster.latitude, cluster.longitude]}
-                                icon={buildPointIcon('#1677ff')}>
-                            <Popup>{cluster.sample_filename ?? 'GPS point'}</Popup>
-                        </Marker>
-                    ))}
-                    {expandedPoints.map((point) => (
-                        <Marker key={`expanded-${point.id}`} position={[point.latitude, point.longitude]}
-                                icon={buildPointIcon('#ff4d4f')}>
-                            <Popup>
-                                <div>
-                                    <div>{point.filename ?? 'GPS point'}</div>
-                                    <div>{point.timestamp ?? '-'}</div>
-                                    <div>{point.latitude}, {point.longitude}</div>
-                                </div>
-                            </Popup>
-                        </Marker>
-                    ))}
-                </MapContainer>
-            </div>
-            <Typography.Paragraph type="secondary" style={{marginTop: 8, marginBottom: 0}}>
-                {loadingTrack ? ' - Kuvaston karttareittia ladataan...' : ''}
-                {loadingClusters ? ' - Ladataan karttanakyma...' : ''}
-            </Typography.Paragraph>
-            {mapInstance && expandedPoints.length > 0 && (
-                <Typography.Paragraph type="secondary" style={{marginTop: 4, marginBottom: 0}}>
-                    Expanded {expandedPoints.length} point{expandedPoints.length === 1 ? '' : 's'} from the selected
-                    cluster.
+            <div style={{margin: '24px 0'}}>
+                <Typography.Title level={4} style={{marginBottom: 12}}>Kuvaston reitti</Typography.Title>
+                {trackError && <Alert type="warning" title={trackError} style={{marginBottom: 12}}/>}
+                {clusterError && <Alert type="error" title={clusterError} style={{marginBottom: 12}}/>}
+                {expansionError && <Alert type="warning" title={expansionError} style={{marginBottom: 12}}/>}
+                <div style={{height: 520, borderRadius: 8, overflow: 'hidden'}}>
+                    <MapContainer bounds={mapBounds} style={{width: '100%', height: '100%'}} scrollWheelZoom>
+                        <TileLayer
+                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        />
+                        <MapViewportBridge onMapReady={setMapInstance} onViewportChange={loadClusters}/>
+                        {trackPath.length > 1 &&
+                                <Polyline positions={trackPath} color="#52c41a" weight={3} opacity={0.85}/>}
+                        {clusters.map((cluster) => cluster.kind === 'cluster' ? (
+                                <ClusterMarker key={cluster.cluster_key} cluster={cluster} onExpand={handleClusterExpand}/>
+                        ) : (
+                                <Marker key={cluster.cluster_key} position={[cluster.latitude, cluster.longitude]}
+                                        icon={buildPointIcon('#1677ff')}>
+                                    <Popup>{cluster.sample_filename ?? 'GPS point'}</Popup>
+                                </Marker>
+                        ))}
+                        {expandedPoints.map((point) => (
+                                <Marker key={`expanded-${point.id}`} position={[point.latitude, point.longitude]}
+                                        icon={buildPointIcon('#ff4d4f')}>
+                                    <Popup>
+                                        <div>
+                                            <div>{point.filename ?? 'GPS point'}</div>
+                                            <div>{point.timestamp ?? '-'}</div>
+                                            <div>{point.latitude}, {point.longitude}</div>
+                                        </div>
+                                    </Popup>
+                                </Marker>
+                        ))}
+                    </MapContainer>
+                </div>
+                <Typography.Paragraph type="secondary" style={{marginTop: 8, marginBottom: 0}}>
+                    {loadingTrack ? ' - Kuvaston karttareittia ladataan...' : ''}
+                    {loadingClusters ? ' - Ladataan karttanakyma...' : ''}
                 </Typography.Paragraph>
-            )}
-        </div>
+                {mapInstance && expandedPoints.length > 0 && (
+                        <Typography.Paragraph type="secondary" style={{marginTop: 4, marginBottom: 0}}>
+                            Expanded {expandedPoints.length} point{expandedPoints.length === 1 ? '' : 's'} from the selected
+                            cluster.
+                        </Typography.Paragraph>
+                )}
+            </div>
     );
 }

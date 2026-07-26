@@ -13,12 +13,12 @@ function normalizeData(rawData: unknown): WordCloudEmbedDataItem[] {
     }
 
     return rawData
-        .filter((item): item is Record<string, unknown> => typeof item === 'object' && item !== null)
-        .map((item) => ({
-            text: typeof item.text === 'string' ? item.text.trim() : '',
-            value: Number(item.value),
-        }))
-        .filter((item) => item.text !== '' && Number.isFinite(item.value) && item.value > 0);
+            .filter((item): item is Record<string, unknown> => typeof item === 'object' && item !== null)
+            .map((item) => ({
+                text: typeof item.text === 'string' ? item.text.trim() : '',
+                value: Number(item.value),
+            }))
+            .filter((item) => item.text !== '' && Number.isFinite(item.value) && item.value > 0);
 }
 
 function buildChartConfig(options: WordCloudEmbedOptions, data: WordCloudEmbedDataItem[]): ComponentProps<typeof WordCloud> {
@@ -45,8 +45,8 @@ export function WordCloudEmbed({options = {}}: WordCloudEmbedProps) {
     const config = buildChartConfig(options, data);
 
     return (
-        <div data-testid="word-cloud-embed" style={{margin: '24px 0'}}>
-            <WordCloud {...config} />
-        </div>
+            <div data-testid="word-cloud-embed" style={{margin: '24px 0'}}>
+                <WordCloud {...config} />
+            </div>
     );
 }

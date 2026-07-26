@@ -80,8 +80,8 @@ yarn test:coverage # jest --coverage
 yarn build         # tsc -p tsconfig.build.json → dist/
 ```
 
-`prebuild` (`node generateBuildInfo.cjs`) runs automatically before `build`; `build:production` calls it explicitly.
-Build output goes to `dist/`; test files and `setupTests.ts` are excluded from the build via `tsconfig.build.json`.
+`prebuild` (`node generateBuildInfo.cjs`) runs automatically before `build`; `build:production` calls it explicitly. Build output goes to `dist/`; test files
+and `setupTests.ts` are excluded from the build via `tsconfig.build.json`.
 
 ---
 
@@ -109,7 +109,7 @@ Build output goes to `dist/`; test files and `setupTests.ts` are excluded from t
 - When moving existing files from one location to another and the files have already been added to the git, use `git mv` to preserve the file history. If the
   files have not been added to git, you can use `mv` or your file explorer to move them, and then add the changes to git with `git add`.
 - Test files must all be placed in a separate directory under src called `__tests__` folders and named `*.test.ts` / `*.test.tsx` for Jest discovery. Under the
-  main directory of src/__tests__/ are subfolders reflecting the main src structure (for example, `src/__tests__/embeds/` for embed dialog tests and
+  main directory of src/ __tests__/ are subfolders reflecting the main src structure (for example, `src/__tests__/embeds/` for embed dialog tests and
   `src/__tests__/tools/` for parser tests).
 - All tasks must always be validated by running the test suite, coverage and linting before pushing commits or creating pull requests. Use `yarn test`,
   `yarn test:coverage` and `yarn lint` for this purpose. If you want to automatically fix linting issues, you can use `yarn lint:fix`.
