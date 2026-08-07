@@ -54,7 +54,7 @@
     "eslint" : "^10.8.0",
     "eslint-plugin-react-hooks" : "^7.1.1",
     "eslint-plugin-react-refresh" : "^0.5.3",
-    "globals" : "^17.8.0",
+    "globals" : "^17.9.0",
     "jest" : "^30.4.2",
     "jest-environment-jsdom" : "^30.4.1",
     "leaflet" : "^1.9.4",
@@ -65,7 +65,7 @@
     "react-router-dom" : "^7.18.2",
     "ts-jest" : "^29.4.12",
     "typescript" : "npm:@typescript/typescript6@^6.0.2",
-    "typescript-eslint" : "^8.65.0"
+    "typescript-eslint" : "^8.66.0"
   },
   "repository" : {
     "type" : "git",
