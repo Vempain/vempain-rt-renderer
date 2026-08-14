@@ -157,8 +157,8 @@ The host should return absolute or correctly base-prefixed URLs from `getFileUrl
 | `pageTitle`     | `string`                                                | Optional title passed to hero embeds. Defaults to an empty string. |
 | `renderGallery` | `(galleryId: number, index: number) => React.ReactNode` | Optional host gallery renderer.                                    |
 
-Gallery embeds are the only embeds that require host rendering. If `renderGallery` is omitted, the component displays an informational fallback instead of
-silently dropping the gallery.
+Gallery embeds and carousel heroes require host rendering. If `renderGallery` is omitted, the component displays an informational fallback instead of silently
+dropping the embed.
 
 ## Supported tags
 
@@ -166,6 +166,7 @@ The parser accepts literal and HTML-entity-encoded comment tags:
 
 ```html
 <!--vps:embed:image:42-->
+<!--vps:embed:hero:42:type:video-->
 <!--vps:embed:music:my_library-->
 <!--vps:embed:youtube:https://www.youtube.com/watch?v=abc-->
 <!--vps:embed:last:images:10-->
@@ -175,6 +176,10 @@ The parser accepts literal and HTML-entity-encoded comment tags:
 
 The supported types are gallery, image, hero, video, audio, youtube, music, gps_timeseries, last, word_cloud, today_random, collapse, and carousel. Identifiers
 must match the package's lowercase identifier rules. Embed types are case-insensitive and are normalized to lowercase.
+
+Hero tags support `image`, `video`, and `carousel` types. A legacy `<!--vps:embed:hero:[id]-->` tag is backwards compatible and is normalized to
+`image`. Image and video heroes load a public site file and overlay the page title; carousel heroes invoke the host's `renderGallery` callback with the hero ID.
+The callback is required for carousel heroes, otherwise an informational fallback is rendered.
 
 `PageBodyRenderer` exports the standard embed components through the package root for advanced use, including `ImageEmbed`, `HeroEmbed`, `CollapseEmbed`,
 `CarouselEmbed`, `VideoEmbed`,
@@ -189,7 +194,7 @@ must match the package's lowercase identifier rules. Embed types are case-insens
 4. Implement `getFileUrl` and `toFrontendPagePath` using the host's API and routing conventions.
 5. Wrap the application in `RendererProvider`.
 6. Pass stored page body HTML to `PageBodyRenderer`; do not sanitize away Vempain comment tags.
-7. Supply `renderGallery` if gallery embeds are present.
+7. Supply `renderGallery` if gallery or carousel hero embeds are present.
 8. Handle authentication and API errors in the runtime adapters, returning the documented
    `ApiResponse` shape.
 

@@ -44,6 +44,23 @@ function tryParseTodayRandomOptions(json: string): TodayRandomEmbedOptions | nul
 export function parseEmbeds(body: string): PageEmbed[] {
     const matchesWithIndex: Array<{ embed: PageEmbed; index: number }> = [];
 
+    const typedHeroLiteral = /<!--\s*vps:embed:hero:(?<id>\d+):type:(?<heroType>image|video|carousel)\s*-->/ig;
+    const typedHeroEncoded = /&lt;!--\s*vps:embed:hero:(?<id>\d+):type:(?<heroType>image|video|carousel)\s*--&gt;/ig;
+    for (const pattern of [typedHeroLiteral, typedHeroEncoded]) {
+        let m: RegExpExecArray | null;
+        while ((m = pattern.exec(body)) !== null) {
+            matchesWithIndex.push({
+                embed: {
+                    type: 'hero',
+                    embed_id: Number(m.groups?.id),
+                    hero_type: (m.groups?.heroType ?? 'image').toLowerCase() as 'image' | 'video' | 'carousel',
+                    placeholder: m[0],
+                },
+                index: m.index,
+            });
+        }
+    }
+
     const simpleLiteral = /<!--\s*vps:embed:(?<type>gallery|image|hero|video|audio):(?<id>\d+)\s*-->/ig;
     const simpleEncoded = /&lt;!--\s*vps:embed:(?<type>gallery|image|hero|video|audio):(?<id>\d+)\s*--&gt;/ig;
 
@@ -53,7 +70,7 @@ export function parseEmbeds(body: string): PageEmbed[] {
             const type = (m.groups?.type ?? '').toLowerCase();
             const id = Number(m.groups?.id);
             matchesWithIndex.push({
-                embed: {type, embed_id: id, placeholder: m[0]},
+                embed: {type, embed_id: id, ...(type === 'hero' ? {hero_type: 'image' as const} : {}), placeholder: m[0]},
                 index: m.index,
             });
         }

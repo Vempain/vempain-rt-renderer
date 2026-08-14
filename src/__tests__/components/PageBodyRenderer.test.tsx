@@ -123,6 +123,23 @@ describe('PageBodyRenderer', () => {
         });
     });
 
+    it('renders a typed video hero', async () => {
+        wrap(<PageBodyRenderer body="<!--vps:embed:hero:10:type:video-->" pageTitle="Video Hero"/>);
+        await flush();
+        await waitFor(() => expect(document.querySelector('video')).not.toBeNull());
+        expect(document.querySelector('h1')).toHaveTextContent('Video Hero');
+    });
+
+    it('renders a typed carousel hero with the gallery callback', () => {
+        wrap(
+                <PageBodyRenderer
+                        body="<!--vps:embed:hero:10:type:carousel-->"
+                        renderGallery={(galleryId) => <div data-testid="hero-gallery">Gallery {galleryId}</div>}
+                />
+        );
+        expect(screen.getByTestId('hero-gallery')).toHaveTextContent('Gallery 10');
+    });
+
     it('renders VideoEmbed for video type', async () => {
         wrap(<PageBodyRenderer body="<!--vps:embed:video:20-->"/>);
         await flush();

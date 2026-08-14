@@ -33,6 +33,7 @@ export type {
     MusicDataResponse,
     MusicDataRow,
     PageEmbed,
+    HeroEmbedType,
     TodayRandomEmbedImageItem,
     TodayRandomEmbedOptions,
     TodayRandomEmbedPageItem,
