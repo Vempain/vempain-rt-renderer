@@ -35,7 +35,16 @@ describe('parseEmbeds', () => {
         expect(result[0]).toMatchObject({
             type: 'hero',
             embed_id: 15,
+            hero_type: 'image',
             placeholder: '<!--vps:embed:hero:15-->',
+        });
+    });
+
+    it.each(['image', 'video', 'carousel'])('parses a typed %s hero embed tag', (heroType) => {
+        expect(parseEmbeds(`<!--vps:embed:hero:15:type:${heroType}-->`)[0]).toMatchObject({
+            type: 'hero',
+            embed_id: 15,
+            hero_type: heroType,
         });
     });
 

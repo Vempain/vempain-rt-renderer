@@ -1,19 +1,25 @@
-import {Spin} from 'antd';
+import {Alert, Spin} from 'antd';
+import type {ReactNode} from 'react';
 import {useEffect, useRef, useState} from 'react';
 import {useRendererRuntime} from '../runtime/RendererProvider';
 
 interface HeroEmbedProps {
     fileId: number;
     title: string;
+    heroType?: 'image' | 'video' | 'carousel';
+    renderGallery?: (galleryId: number, index: number) => ReactNode;
 }
 
-export function HeroEmbed({fileId, title}: HeroEmbedProps) {
+export function HeroEmbed({fileId, title, heroType = 'image', renderGallery}: HeroEmbedProps) {
     const {fileAPI, pageAPI} = useRendererRuntime();
     const [src, setSrc] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const activeRef = useRef(true);
 
     useEffect(() => {
+        if (heroType === 'carousel') {
+            return;
+        }
         activeRef.current = true;
 
         pageAPI.getPublicFileById(fileId)
@@ -37,13 +43,21 @@ export function HeroEmbed({fileId, title}: HeroEmbedProps) {
         return () => {
             activeRef.current = false;
         };
-    }, [fileAPI, fileId, pageAPI]);
+    }, [fileAPI, fileId, heroType, pageAPI]);
+
+    if (heroType === 'carousel') {
+        return renderGallery
+                ? <>{renderGallery(fileId, 0)}</>
+                : <Alert type="info" title={`Gallery ${fileId} renderer missing`}/>;
+    }
 
     return (
             <Spin spinning={loading}>
                 {src && (
                         <div style={{position: 'relative', width: '100%'}}>
-                            <img src={src} alt={title} style={{width: '100%', height: 'auto', display: 'block'}}/>
+                            {heroType === 'video'
+                                    ? <video src={src} controls style={{width: '100%', height: 'auto', display: 'block'}}/>
+                                    : <img src={src} alt={title} style={{width: '100%', height: 'auto', display: 'block'}}/>}
                             <div
                                     style={{
                                         position: 'absolute',
@@ -61,4 +75,3 @@ export function HeroEmbed({fileId, title}: HeroEmbedProps) {
             </Spin>
     );
 }
-

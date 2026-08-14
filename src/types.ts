@@ -14,6 +14,7 @@ export type LastEmbedType = 'pages' | 'galleries' | 'images' | 'videos' | 'audio
 export interface PageEmbed {
     type: string;
     embed_id?: number;
+    hero_type?: HeroEmbedType;
     identifier?: string;
     word_cloud_options?: WordCloudEmbedOptions;
     today_random_options?: TodayRandomEmbedOptions;
@@ -26,6 +27,8 @@ export interface PageEmbed {
     last_type?: LastEmbedType;
     count?: number;
 }
+
+export type HeroEmbedType = 'image' | 'video' | 'carousel';
 
 export interface MusicDataRow {
     id: number;
