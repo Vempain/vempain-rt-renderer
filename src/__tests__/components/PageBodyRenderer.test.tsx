@@ -27,6 +27,13 @@ const runtime: RendererRuntime = {
     },
     pageAPI: {
         getPublicFileById: async () => ({data: {file_path: 'x.jpg'}}),
+        getPublicGalleryFiles: async () => ({
+            data: {
+                content: [{id: 1, file_path: 'gallery.jpg', mimetype: 'image/jpeg'}],
+                page: 0,
+                total_pages: 1,
+            },
+        }),
         getLastItems: async () => ({data: {type: 'pages', count: 1, items: []}}),
         getMusicData: async () => ({
             data: {
@@ -130,14 +137,13 @@ describe('PageBodyRenderer', () => {
         expect(document.querySelector('h1')).toHaveTextContent('Video Hero');
     });
 
-    it('renders a typed carousel hero with the gallery callback', () => {
+    it('renders a typed carousel hero with gallery media', async () => {
         wrap(
                 <PageBodyRenderer
                         body="<!--vps:embed:hero:10:type:carousel-->"
-                        renderGallery={(galleryId) => <div data-testid="hero-gallery">Gallery {galleryId}</div>}
                 />
         );
-        expect(screen.getByTestId('hero-gallery')).toHaveTextContent('Gallery 10');
+        await waitFor(() => expect(document.querySelector('img[src="/file/gallery.jpg"]')).not.toBeNull());
     });
 
     it('renders VideoEmbed for video type', async () => {

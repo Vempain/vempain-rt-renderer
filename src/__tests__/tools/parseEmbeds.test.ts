@@ -48,6 +48,14 @@ describe('parseEmbeds', () => {
         });
     });
 
+    it('parses hero carousel duration and transition options', () => {
+        expect(parseEmbeds('<!--vps:embed:hero:15:type:carousel:duration:12:transition:fade-->')[0]).toMatchObject({
+            hero_type: 'carousel',
+            hero_duration: 12,
+            hero_transition: 'fade',
+        });
+    });
+
     it('parses a collapse embed tag with inline JSON items', () => {
         const body = '<p>Text</p><!--vps:embed:collapse:[{"title":"Item A","body":"<p>Body A</p>"},{"title":"Item B","body":"<p>Body B</p>"}]--><p>More</p>';
         const result = parseEmbeds(body);
