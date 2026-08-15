@@ -69,7 +69,7 @@ export function HeroEmbed({
         return (
                 <div style={{width: '100%', minWidth: 0, overflow: 'hidden'}}>
                     <Spin spinning={loading}>
-                        <Carousel autoplay autoplaySpeed={duration * 1000}
+                        <Carousel autoplay pauseOnHover={false} autoplaySpeed={duration * 1000}
                                   beforeChange={(_, next) => setActiveSlide(next)}
                                   effect={transition === 'fade' ? 'fade' : 'scrollx'}>
                             {galleryFiles.map((file, index) => (
