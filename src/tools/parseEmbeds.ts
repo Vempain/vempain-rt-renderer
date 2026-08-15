@@ -44,8 +44,8 @@ function tryParseTodayRandomOptions(json: string): TodayRandomEmbedOptions | nul
 export function parseEmbeds(body: string): PageEmbed[] {
     const matchesWithIndex: Array<{ embed: PageEmbed; index: number }> = [];
 
-    const typedHeroLiteral = /<!--\s*vps:embed:hero:(?<id>\d+):type:(?<heroType>image|video|carousel)\s*-->/ig;
-    const typedHeroEncoded = /&lt;!--\s*vps:embed:hero:(?<id>\d+):type:(?<heroType>image|video|carousel)\s*--&gt;/ig;
+    const typedHeroLiteral = /<!--\s*vps:embed:hero:(?<id>\d+):type:(?<heroType>image|video|carousel)(?::duration:(?<duration>\d+):transition:(?<transition>fade|slide))?\s*-->/ig;
+    const typedHeroEncoded = /&lt;!--\s*vps:embed:hero:(?<id>\d+):type:(?<heroType>image|video|carousel)(?::duration:(?<duration>\d+):transition:(?<transition>fade|slide))?\s*--&gt;/ig;
     for (const pattern of [typedHeroLiteral, typedHeroEncoded]) {
         let m: RegExpExecArray | null;
         while ((m = pattern.exec(body)) !== null) {
@@ -54,6 +54,8 @@ export function parseEmbeds(body: string): PageEmbed[] {
                     type: 'hero',
                     embed_id: Number(m.groups?.id),
                     hero_type: (m.groups?.heroType ?? 'image').toLowerCase() as 'image' | 'video' | 'carousel',
+                    hero_duration: Number(m.groups?.duration ?? '5') || 5,
+                    hero_transition: m.groups?.transition === 'fade' ? 'fade' : 'slide',
                     placeholder: m[0],
                 },
                 index: m.index,

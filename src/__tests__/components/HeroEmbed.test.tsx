@@ -8,6 +8,13 @@ function makeRuntime(getPublicFileById: jest.Mock): RendererRuntime {
         routes: {toFrontendPagePath: (p: string) => `/pages/${p}`},
         pageAPI: {
             getPublicFileById,
+            getPublicGalleryFiles: jest.fn().mockResolvedValue({
+                data: {
+                    content: [{id: 1, file_path: 'hero.jpg', mimetype: 'image/jpeg'}],
+                    page: 0,
+                    total_pages: 1,
+                },
+            }),
             getLastItems: jest.fn().mockResolvedValue({data: {type: 'pages', count: 0, items: []}}),
             getMusicData: jest.fn(),
             getGpsOverview: jest.fn(),
@@ -42,6 +49,30 @@ describe('HeroEmbed', () => {
         await waitFor(() => {
             expect(screen.getByText('Hero Heading')).toBeInTheDocument();
         });
+    });
+
+    it('renders gallery files as an animated hero carousel', async () => {
+        const getPublicFileById = jest.fn();
+        const getPublicGalleryFiles = jest.fn().mockResolvedValue({
+            data: {
+                content: [
+                    {id: 1, file_path: 'one.jpg', mimetype: 'image/jpeg'},
+                    {id: 2, file_path: 'two.mp4', mimetype: 'video/mp4'},
+                ],
+                page: 0,
+                total_pages: 1,
+            },
+        });
+        const runtime = makeRuntime(getPublicFileById);
+        runtime.pageAPI.getPublicGalleryFiles = getPublicGalleryFiles;
+        render(
+                <RendererProvider value={runtime}>
+                    <HeroEmbed fileId={1084} title="Carousel Hero" heroType="carousel" duration={7} transition="fade"/>
+                </RendererProvider>
+        );
+        await waitFor(() => expect(screen.getByAltText('Carousel Hero')).toBeInTheDocument());
+        expect(getPublicGalleryFiles).toHaveBeenCalledWith(1084, {page: 0, size: 100});
+        expect(document.querySelector('video[src="/hero/two.mp4"]')).not.toBeNull();
     });
 
     it('renders no img when file_path is null', async () => {
@@ -106,4 +137,3 @@ describe('HeroEmbed', () => {
         });
     });
 });
-

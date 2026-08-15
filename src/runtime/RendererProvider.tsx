@@ -8,10 +8,14 @@ import type {
     LastEmbedType,
     LastItemsResponse,
     MusicDataResponse,
+    RendererGalleryFile,
 } from '../types';
 
 export interface RendererPageApi {
     getPublicFileById(id: number): Promise<ApiResponse<{ file_path?: string | null; thumbnail_path?: string | null }>>;
+
+    getPublicGalleryFiles?: (galleryId: number, params?: { page?: number; size?: number }) =>
+            Promise<ApiResponse<{ content: RendererGalleryFile[]; page: number; total_pages: number }>>;
 
     getLastItems(type: LastEmbedType, count: number): Promise<ApiResponse<LastItemsResponse>>;
 
@@ -65,4 +69,3 @@ export function useRendererRuntime(): RendererRuntime {
     }
     return runtime;
 }
-

@@ -59,7 +59,7 @@ export function PageBodyRenderer({body, pageTitle = '', renderGallery}: PageBody
         } else if (embed.type === 'hero' && embed.embed_id) {
             segments.push(<HeroEmbed key={`hero-${embed.embed_id}-${index}`} fileId={embed.embed_id}
                                      title={pageTitle} heroType={embed.hero_type}
-                                     renderGallery={renderGallery}/>);
+                                     duration={embed.hero_duration} transition={embed.hero_transition}/>);
         } else if (embed.type === 'video' && embed.embed_id) {
             segments.push(<VideoEmbed key={`video-${embed.embed_id}-${index}`} fileId={embed.embed_id}/>);
         } else if (embed.type === 'audio' && embed.embed_id) {

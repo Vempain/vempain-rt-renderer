@@ -1,33 +1,50 @@
-import {Alert, Spin} from 'antd';
-import type {ReactNode} from 'react';
+import {Alert, Carousel, Spin} from 'antd';
 import {useEffect, useRef, useState} from 'react';
 import {useRendererRuntime} from '../runtime/RendererProvider';
+import type {HeroTransition, RendererGalleryFile} from '../types';
 
 interface HeroEmbedProps {
     fileId: number;
     title: string;
     heroType?: 'image' | 'video' | 'carousel';
-    renderGallery?: (galleryId: number, index: number) => ReactNode;
+    duration?: number;
+    transition?: HeroTransition;
 }
 
-export function HeroEmbed({fileId, title, heroType = 'image', renderGallery}: HeroEmbedProps) {
+export function HeroEmbed({
+                              fileId,
+                              title,
+                              heroType = 'image',
+                              duration = 5,
+                              transition = 'slide',
+                          }: HeroEmbedProps) {
     const {fileAPI, pageAPI} = useRendererRuntime();
     const [src, setSrc] = useState<string | null>(null);
+    const [galleryFiles, setGalleryFiles] = useState<RendererGalleryFile[]>([]);
+    const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const activeRef = useRef(true);
 
     useEffect(() => {
-        if (heroType === 'carousel') {
+        activeRef.current = true;
+        setError(null);
+        const request = heroType === 'carousel'
+                ? pageAPI.getPublicGalleryFiles?.(fileId, {page: 0, size: 100})
+                : pageAPI.getPublicFileById(fileId);
+        if (!request) {
+            setError('Gallery media API is not configured.');
+            setLoading(false);
             return;
         }
-        activeRef.current = true;
-
-        pageAPI.getPublicFileById(fileId)
+        request
                 .then((response) => {
                     if (!activeRef.current) return;
-                    const filePath = response.data?.file_path;
-                    if (filePath) {
-                        setSrc(fileAPI.getFileUrl(filePath));
+                    if (heroType === 'carousel') {
+                        const files = response.data && 'content' in response.data ? response.data.content : [];
+                        setGalleryFiles(files);
+                    } else {
+                        const filePath = response.data && 'file_path' in response.data ? response.data.file_path : null;
+                        if (filePath) setSrc(fileAPI.getFileUrl(filePath));
                     }
                 })
                 .catch(() => {
@@ -46,9 +63,24 @@ export function HeroEmbed({fileId, title, heroType = 'image', renderGallery}: He
     }, [fileAPI, fileId, heroType, pageAPI]);
 
     if (heroType === 'carousel') {
-        return renderGallery
-                ? <>{renderGallery(fileId, 0)}</>
-                : <Alert type="info" title={`Gallery ${fileId} renderer missing`}/>;
+        if (error) return <Alert type="error" title={error}/>;
+        return (
+                <Spin spinning={loading}>
+                    <Carousel autoplay autoplaySpeed={duration * 1000}
+                              effect={transition === 'fade' ? 'fade' : 'scrollx'}>
+                        {galleryFiles.map((file) => (
+                                <div key={file.id} style={{position: 'relative'}}>
+                                    {file.mimetype.startsWith('video/')
+                                            ? <video src={fileAPI.getFileUrl(file.file_path)} controls
+                                                     style={{width: '100%', height: 'auto', display: 'block'}}/>
+                                            : <img src={fileAPI.getFileUrl(file.file_path)} alt={title}
+                                                   style={{width: '100%', height: 'auto', display: 'block'}}/>}
+                                    <HeroTitle title={title}/>
+                                </div>
+                        ))}
+                    </Carousel>
+                </Spin>
+        );
     }
 
     return (
@@ -58,20 +90,24 @@ export function HeroEmbed({fileId, title, heroType = 'image', renderGallery}: He
                             {heroType === 'video'
                                     ? <video src={src} controls style={{width: '100%', height: 'auto', display: 'block'}}/>
                                     : <img src={src} alt={title} style={{width: '100%', height: 'auto', display: 'block'}}/>}
-                            <div
-                                    style={{
-                                        position: 'absolute',
-                                        inset: 0,
-                                        background: 'rgba(0, 0, 0, 0.45)',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                    }}
-                            >
-                                <h1 style={{color: '#fff', margin: 0, textAlign: 'center', padding: '0 16px'}}>{title}</h1>
-                            </div>
+                            <HeroTitle title={title}/>
                         </div>
                 )}
             </Spin>
+    );
+}
+
+function HeroTitle({title}: { title: string }) {
+    return (
+            <div style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'rgba(0, 0, 0, 0.45)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}>
+                <h1 style={{color: '#fff', margin: 0, textAlign: 'center', padding: '0 16px'}}>{title}</h1>
+            </div>
     );
 }

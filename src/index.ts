@@ -34,6 +34,8 @@ export type {
     MusicDataRow,
     PageEmbed,
     HeroEmbedType,
+    HeroTransition,
+    RendererGalleryFile,
     TodayRandomEmbedImageItem,
     TodayRandomEmbedOptions,
     TodayRandomEmbedPageItem,

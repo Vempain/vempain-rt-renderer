@@ -15,6 +15,8 @@ export interface PageEmbed {
     type: string;
     embed_id?: number;
     hero_type?: HeroEmbedType;
+    hero_duration?: number;
+    hero_transition?: HeroTransition;
     identifier?: string;
     word_cloud_options?: WordCloudEmbedOptions;
     today_random_options?: TodayRandomEmbedOptions;
@@ -29,6 +31,13 @@ export interface PageEmbed {
 }
 
 export type HeroEmbedType = 'image' | 'video' | 'carousel';
+export type HeroTransition = 'fade' | 'slide';
+
+export interface RendererGalleryFile {
+    id: number;
+    file_path: string;
+    mimetype: string;
+}
 
 export interface MusicDataRow {
     id: number;
