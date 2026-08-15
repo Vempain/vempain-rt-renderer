@@ -3,3 +3,5 @@ dist
 coverage
 .pnp.*
 .idea
+
+src/buildinfo.json

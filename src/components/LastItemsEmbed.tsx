@@ -3,7 +3,7 @@ import {useEffect, useRef, useState} from 'react';
 import {Link as RouterLink} from 'react-router-dom';
 import {useRendererRuntime} from '../runtime/RendererProvider';
 import {parseEmbeds} from '../tools/parseEmbeds';
-import type {LastEmbedType, PageEmbed} from '../types';
+import type {HeroEmbedType, LastEmbedType, PageEmbed} from '../types';
 
 const {Paragraph, Text, Title} = Typography;
 
@@ -36,10 +36,14 @@ function formatPublished(published: string | null): string {
     return parsed.toLocaleDateString();
 }
 
-function findHeroEmbedId(body: string): number | null {
+function findHeroEmbed(body: string): { id: number; type: HeroEmbedType } | null {
     const embeds = parseEmbeds(body);
-    const hero = embeds.find((embed: PageEmbed) => embed.type === 'hero' && typeof embed.embed_id === 'number');
-    return hero?.embed_id ?? null;
+    const hero = embeds.find((embed: PageEmbed) =>
+            embed.type === 'hero' &&
+            typeof embed.embed_id === 'number');
+    return hero?.embed_id === undefined
+            ? null
+            : {id: hero.embed_id, type: hero.hero_type ?? 'image'};
 }
 
 function createPlainTopicExcerpt(body: string, header?: string | null, maxLength = 260): string {
@@ -78,7 +82,11 @@ function renderNavLink(path: string, label: string): React.ReactNode {
     return <RouterLink to={path}>{label}</RouterLink>;
 }
 
-function PageHeroThumbnail({heroFileId, alt}: { heroFileId: number; alt: string }) {
+function PageHeroThumbnail({heroFileId, heroType, alt}: {
+    heroFileId: number;
+    heroType: HeroEmbedType;
+    alt: string;
+}) {
     const {fileAPI, pageAPI} = useRendererRuntime();
     const [src, setSrc] = useState<string | null>(null);
     const activeRef = useRef(true);
@@ -86,11 +94,26 @@ function PageHeroThumbnail({heroFileId, alt}: { heroFileId: number; alt: string 
     useEffect(() => {
         activeRef.current = true;
 
-        pageAPI.getPublicFileById(heroFileId)
+        const request = heroType === 'carousel'
+                ? pageAPI.getPublicGalleryFiles?.(heroFileId, {page: 0, size: 100})
+                : pageAPI.getPublicFileById(heroFileId);
+        if (!request) {
+            return;
+        }
+
+        request
                 .then((response) => {
                     if (!activeRef.current) return;
-                    const thumbPath = response.data?.thumbnail_path;
-                    const filePath = response.data?.file_path;
+                    const data = response.data;
+                    const galleryImage = heroType === 'carousel' && data && 'content' in data
+                            ? data.content.find((file) => file.mimetype.startsWith('image/'))
+                            : null;
+                    const thumbPath = heroType === 'carousel' || !data || !('thumbnail_path' in data)
+                            ? null
+                            : data.thumbnail_path;
+                    const filePath = heroType === 'carousel'
+                            ? galleryImage?.file_path
+                            : data && 'file_path' in data ? data.file_path : null;
                     const bestPath = thumbPath ?? filePath;
                     if (bestPath) {
                         setSrc(fileAPI.getFileUrl(bestPath));
@@ -104,7 +127,7 @@ function PageHeroThumbnail({heroFileId, alt}: { heroFileId: number; alt: string 
         return () => {
             activeRef.current = false;
         };
-    }, [fileAPI, heroFileId, pageAPI]);
+    }, [fileAPI, heroFileId, heroType, pageAPI]);
 
     if (!src) {
         return null;
@@ -196,15 +219,16 @@ export function LastItemsEmbed({lastType, count}: LastItemsEmbedProps) {
                             }}>
                                 {items.map((item, index) => {
                                     const body = item.body ?? '';
-                                    const heroFileId = body ? findHeroEmbedId(body) : null;
+                                    const hero = body ? findHeroEmbed(body) : null;
                                     const excerpt = createPlainTopicExcerpt(body, item.header);
 
                                     return (
                                             <Card key={`last-page-${item.id ?? index}`}>
                                                 <Row gutter={[16, 16]} align="top">
-                                                    {heroFileId ? <Col xs={24} md={8}><PageHeroThumbnail heroFileId={heroFileId}
+                                                    {hero ? <Col xs={24} md={8}><PageHeroThumbnail heroFileId={hero.id}
+                                                                                                   heroType={hero.type}
                                                                                                          alt={item.title}/></Col> : null}
-                                                    <Col xs={24} md={heroFileId ? 16 : 24}>
+                                                    <Col xs={24} md={hero ? 16 : 24}>
                                                         <Title level={4} style={{marginTop: 0, marginBottom: 8}}>
                                                             {renderNavLink(getItemLink(item), item.title)}
                                                         </Title>
