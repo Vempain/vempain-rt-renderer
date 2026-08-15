@@ -72,7 +72,7 @@ describe('HeroEmbed', () => {
         );
         await waitFor(() => expect(screen.getByAltText('Carousel Hero')).toBeInTheDocument());
         expect(getPublicGalleryFiles).toHaveBeenCalledWith(1084, {page: 0, size: 100});
-        expect(document.querySelector('video[src="/hero/two.mp4"]')).not.toBeNull();
+        expect(document.querySelector('video[src="/hero/two.mp4"]')).toBeNull();
     });
 
     it('renders no img when file_path is null', async () => {

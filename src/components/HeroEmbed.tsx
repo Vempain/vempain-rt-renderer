@@ -21,6 +21,7 @@ export function HeroEmbed({
     const {fileAPI, pageAPI} = useRendererRuntime();
     const [src, setSrc] = useState<string | null>(null);
     const [galleryFiles, setGalleryFiles] = useState<RendererGalleryFile[]>([]);
+    const [activeSlide, setActiveSlide] = useState(0);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const activeRef = useRef(true);
@@ -28,6 +29,7 @@ export function HeroEmbed({
     useEffect(() => {
         activeRef.current = true;
         setError(null);
+        setActiveSlide(0);
         const request = heroType === 'carousel'
                 ? pageAPI.getPublicGalleryFiles?.(fileId, {page: 0, size: 100})
                 : pageAPI.getPublicFileById(fileId);
@@ -65,21 +67,24 @@ export function HeroEmbed({
     if (heroType === 'carousel') {
         if (error) return <Alert type="error" title={error}/>;
         return (
-                <Spin spinning={loading}>
-                    <Carousel autoplay autoplaySpeed={duration * 1000}
-                              effect={transition === 'fade' ? 'fade' : 'scrollx'}>
-                        {galleryFiles.map((file) => (
-                                <div key={file.id} style={{position: 'relative'}}>
-                                    {file.mimetype.startsWith('video/')
-                                            ? <video src={fileAPI.getFileUrl(file.file_path)} controls
-                                                     style={{width: '100%', height: 'auto', display: 'block'}}/>
-                                            : <img src={fileAPI.getFileUrl(file.file_path)} alt={title}
-                                                   style={{width: '100%', height: 'auto', display: 'block'}}/>}
-                                    <HeroTitle title={title}/>
-                                </div>
-                        ))}
-                    </Carousel>
-                </Spin>
+                <div style={{width: '100%', minWidth: 0, overflow: 'hidden'}}>
+                    <Spin spinning={loading}>
+                        <Carousel autoplay autoplaySpeed={duration * 1000}
+                                  beforeChange={(_, next) => setActiveSlide(next)}
+                                  effect={transition === 'fade' ? 'fade' : 'scrollx'}>
+                            {galleryFiles.map((file, index) => (
+                                    <div key={file.id} style={{position: 'relative', width: '100%', minWidth: 0}}>
+                                        {index === activeSlide && (file.mimetype.startsWith('video/')
+                                                ? <video src={fileAPI.getFileUrl(file.file_path)} controls
+                                                         style={{width: '100%', height: 'auto', display: 'block'}}/>
+                                                : <img src={fileAPI.getFileUrl(file.file_path)} alt={title}
+                                                       style={{width: '100%', height: 'auto', display: 'block'}}/>)}
+                                        {index === activeSlide && <HeroTitle title={title}/>}
+                                    </div>
+                            ))}
+                        </Carousel>
+                    </Spin>
+                </div>
         );
     }
 
