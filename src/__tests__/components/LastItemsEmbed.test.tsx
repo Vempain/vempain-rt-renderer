@@ -4,12 +4,17 @@ import {LastItemsEmbed} from '../../components/LastItemsEmbed';
 import {RendererProvider, type RendererRuntime} from '../../runtime/RendererProvider';
 import type {LastEmbedType, LastItemsResponse} from '../../types';
 
-function makeRuntime(getLastItems: jest.Mock, getPublicFileById?: jest.Mock): RendererRuntime {
+function makeRuntime(
+        getLastItems: jest.Mock,
+        getPublicFileById?: jest.Mock,
+        getPublicGalleryFiles?: jest.Mock,
+): RendererRuntime {
     return {
         fileAPI: {getFileUrl: (p: string) => `/files/${p}`},
         routes: {toFrontendPagePath: (p: string) => `/pages/${p}`},
         pageAPI: {
             getPublicFileById: getPublicFileById ?? jest.fn().mockResolvedValue({data: {file_path: null}}),
+            getPublicGalleryFiles,
             getLastItems,
             getMusicData: jest.fn(),
             getGpsOverview: jest.fn(),
@@ -25,10 +30,11 @@ function renderWithAll(
         count: number,
         getLastItems: jest.Mock,
         getPublicFileById?: jest.Mock,
+        getPublicGalleryFiles?: jest.Mock,
 ) {
     return render(
             <MemoryRouter>
-                <RendererProvider value={makeRuntime(getLastItems, getPublicFileById)}>
+                <RendererProvider value={makeRuntime(getLastItems, getPublicFileById, getPublicGalleryFiles)}>
                     <LastItemsEmbed lastType={lastType} count={count}/>
                 </RendererProvider>
             </MemoryRouter>
@@ -69,6 +75,42 @@ describe('LastItemsEmbed – pages type', () => {
         // Should prefer thumbnail
         const thumb = document.querySelector('img[src="/files/hero_thumb.jpg"]');
         expect(thumb).toBeInTheDocument();
+    });
+
+    it('uses the first image from a carousel gallery as the page thumbnail', async () => {
+        const getLastItems = jest.fn().mockResolvedValue(makeResponse('pages', [
+            {
+                id: 6,
+                title: 'Carousel Hero Page',
+                published: '2025-08-15',
+                file_path: '/page/carousel',
+                body: '<p><!--vps:embed:hero:1084:type:carousel--><br></p><p><!--vps:embed:last:pages:12--><br></p>',
+                header: null,
+            },
+        ]));
+        const getPublicFileById = jest.fn();
+        const getPublicGalleryFiles = jest.fn().mockResolvedValue({
+            data: {
+                content: [
+                    {id: 21, file_path: '/video/first.mp4', mimetype: 'video/mp4'},
+                    {id: 22, file_path: '/image/first.jpg', mimetype: 'image/jpeg'},
+                    {id: 23, file_path: '/image/second.jpg', mimetype: 'image/jpeg'},
+                ],
+                page: 0,
+                total_pages: 1,
+            },
+        });
+
+        renderWithAll('pages', 12, getLastItems, getPublicFileById, getPublicGalleryFiles);
+        await waitFor(() => {
+            expect(getPublicGalleryFiles).toHaveBeenCalledWith(1084, {page: 0, size: 100});
+        });
+
+        expect(screen.getByText('Carousel Hero Page')).toBeInTheDocument();
+        expect(getPublicFileById).not.toHaveBeenCalled();
+        await waitFor(() => {
+            expect(document.querySelector('img[src="/files//image/first.jpg"]')).toBeInTheDocument();
+        });
     });
 
     it('renders page item without hero when body has no hero embed', async () => {
@@ -280,4 +322,3 @@ describe('LastItemsEmbed – error and body-stripping', () => {
         expect(screen.getByText('Page with failing hero')).toBeInTheDocument();
     });
 });
-
