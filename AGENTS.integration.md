@@ -7,8 +7,8 @@ containing Vempain embed comment tags and replaces supported tags with React com
 
 - Package repository: https://github.com/Vempain/vempain-rt-renderer
 - Editor repository: https://github.com/Vempain/vempain-rt-editor
-- Example renderer host: https://github.com/Vempain/vempain-website
-- Example host runtime: https://github.com/Vempain/vempain-website/blob/main/frontend/src/rendererRuntime.ts
+- Example renderer host: https://github.com/Vempain/vempain-website-frontend
+- Example host runtime: https://github.com/Vempain/vempain-website-frontend/blob/main/src/rendererRuntime.ts
 
 Read `src/index.ts`, `src/components/PageBodyRenderer.tsx`, and
 `src/runtime/RendererProvider.tsx` when published declarations differ from this guide.
@@ -32,8 +32,9 @@ The host application must provide these peer dependencies:
 - `react-player` 3
 - `react-router-dom` 7
 
-Leaflet CSS must be imported by the host, and Leaflet marker assets may need explicit bundler configuration. The website host configures marker URLs in
-`main.tsx` before rendering the app.
+Leaflet CSS must be imported by the host, and Leaflet marker assets may need explicit bundler configuration. The `vempain-website-frontend` host configures
+marker URLs in
+`src/main.tsx` before rendering the app.
 
 ## Required runtime provider
 
@@ -204,4 +205,5 @@ provide that method for carousel heroes; without it an error alert is rendered.
 8. Handle authentication and API errors in the runtime adapters, returning the documented
    `ApiResponse` shape.
 
-The website reference integration is in `frontend/src/main.tsx`, `frontend/src/rendererRuntime.ts`, and `frontend/src/components/PageView.tsx`.
+The website reference integration is in `vempain-website-frontend`: `src/main.tsx`, `src/rendererRuntime.ts`, `src/rendererGalleryAdapter.ts`, and
+`src/components/PageView.tsx`.
