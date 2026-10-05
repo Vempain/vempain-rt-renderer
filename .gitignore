@@ -4,4 +4,4 @@ coverage
 .pnp.*
 .idea
 
-src/buildinfo.json
+src/buildInfo.json

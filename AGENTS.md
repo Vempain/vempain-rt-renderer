@@ -3,7 +3,8 @@
 Reusable React component library (published as `@vempain/vempain-rt-renderer` to GitHub Packages) that parses and renders Vempain rich-text page bodies
 containing `<!--vps:embed:…-->` tags.
 
-- Public usage docs are mirrored in `vempain-site`; keep `RendererProvider`, `PageBodyRenderer`, and the exported embed component props in sync with those docs.
+- Public usage docs are mirrored in `vempain-site` (`src/components/RtRenderer.tsx`) and the host-integration guide is `AGENTS.integration.md`; keep
+  `RendererProvider`, `PageBodyRenderer`, and the exported embed component props in sync with both.
 
 ---
 
@@ -33,8 +34,8 @@ Every embed component calls `useRendererRuntime()`. Wrapping the consumer app in
 </RendererProvider>
 ```
 
-- `pageAPI` – implements `RendererPageApi`: `getPublicFileById`, `getLastItems`, `getMusicData`, `getGpsOverview`, `getGpsClusters`, `getGpsClusterPoints`,
-  `getGpsTrack`
+- `pageAPI` – implements `RendererPageApi` (declared in `src/runtime/RendererProvider.tsx`): `getPublicFileById`, `getLastItems`, `getMusicData`,
+  `getGpsOverview`, `getGpsClusters`, `getGpsClusterPoints`, `getGpsTrack`, plus the optional `getPublicGalleryFiles` required by carousel hero embeds
 - `fileAPI` – implements `RendererFileApi`: `getFileUrl(filePath): string`
 - `routes` – implements `RendererRoutes`: `toFrontendPagePath(filePath): string`
 
@@ -80,30 +81,24 @@ yarn test:coverage # jest --coverage
 yarn build         # tsc -p tsconfig.build.json → dist/
 ```
 
-`prebuild` (`node generateBuildInfo.cjs`) runs automatically before `build`; `build:production` calls it explicitly. Build output goes to `dist/`; test files
-and `setupTests.ts` are excluded from the build via `tsconfig.build.json`.
+`prebuild` (`node generateBuildInfo.js`) runs automatically before `build` and writes `src/buildInfo.json` (a derived artifact); `build:production` calls it
+explicitly. Build output goes to `dist/`; test files and `setupTests.ts` are excluded from the build via `tsconfig.build.json`.
 
 ---
 
 ## Test conventions
 
-- Test files live alongside source: `*.test.ts` / `*.test.tsx`.
+- Test files live under `src/__tests__/`, mirroring the source layout (`components/`, `runtime/`, `tools/`), and are named `*.test.ts` / `*.test.tsx`.
 - Jest runs under `jest-environment-jsdom`; ts-jest transforms `.ts`/`.tsx` with `tsconfig.jest.json`.
 - `react-player` is stubbed via `__mocks__/react-player.tsx` (returns `<div data-testid="mock-react-player">`).
 - ESM packages (`antd`, `leaflet`, `react-leaflet`, `react-player`) are whitelisted in `transformIgnorePatterns` in `jest.config.js` — add new ESM-only deps
   there if they fail to transform.
 - `setupTests.ts` imports `@testing-library/jest-dom` for custom matchers.
 
-## Tag ACL rule
-
-Tags are metadata, not ACL-bearing resources. Tag entities have no ACL information, so tag list, search, and mutation endpoints must not perform ACL checks on tags. ACL checks apply only to resources that explicitly carry an ACL.
-
----
-
 ## Key files for new embed types
 
 1. Add the type and its fields to `PageEmbed` in `src/types.ts`.
-2. Add a regex branch to `parseEmbeds` in `src/tools/parseEmbeds.ts` (and matching tests in `parseEmbeds.test.ts`).
+2. Add a regex branch to `parseEmbeds` in `src/tools/parseEmbeds.ts` (and matching tests in `src/__tests__/tools/parseEmbeds.test.ts`).
 3. Create `src/components/YourEmbed.tsx` using `useRendererRuntime()` for API calls.
 4. Add a dispatch branch in `PageBodyRenderer.tsx`.
 5. Export from `src/index.ts`.
@@ -112,10 +107,15 @@ Tags are metadata, not ACL-bearing resources. Tag entities have no ACL informati
 
 - When moving existing files from one location to another and the files have already been added to the git, use `git mv` to preserve the file history. If the
   files have not been added to git, you can use `mv` or your file explorer to move them, and then add the changes to git with `git add`.
-- Test files must all be placed in a separate directory under src called `__tests__` folders and named `*.test.ts` / `*.test.tsx` for Jest discovery. Under the
-  main directory of src/ __tests__/ are subfolders reflecting the main src structure (for example, `src/__tests__/embeds/` for embed dialog tests and
-  `src/__tests__/tools/` for parser tests).
+- Test files must all be placed under `src/__tests__/` and named `*.test.ts` / `*.test.tsx` for Jest discovery. Subfolders reflect the main `src/`
+  structure (for example `src/__tests__/components/` for embed components and `src/__tests__/tools/` for parser tests).
+- Do not add TypeScript `enum`; use `as const` objects like the other Vempain frontends.
 - All tasks must always be validated by running the test suite, coverage and linting before pushing commits or creating pull requests. Use `yarn test`,
   `yarn test:coverage` and `yarn lint` for this purpose. If you want to automatically fix linting issues, you can use `yarn lint:fix`.
 - Treat all deprecation warnings as required maintenance work: whenever `yarn test`, `yarn test:coverage`, `yarn lint`, or build output reports deprecated
   APIs/props/behavior, update the implementation and tests immediately so no deprecation warnings remain.
+
+## Tag ACL rule
+
+Tags are metadata, not ACL-bearing resources. Tag entities have no ACL information, so tag list, search, and mutation endpoints must not perform ACL checks on
+tags. ACL checks apply only to resources that explicitly carry an ACL.
