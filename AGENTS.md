@@ -94,6 +94,10 @@ and `setupTests.ts` are excluded from the build via `tsconfig.build.json`.
   there if they fail to transform.
 - `setupTests.ts` imports `@testing-library/jest-dom` for custom matchers.
 
+## Tag ACL rule
+
+Tags are metadata, not ACL-bearing resources. Tag entities have no ACL information, so tag list, search, and mutation endpoints must not perform ACL checks on tags. ACL checks apply only to resources that explicitly carry an ACL.
+
 ---
 
 ## Key files for new embed types
