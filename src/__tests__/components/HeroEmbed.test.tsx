@@ -137,4 +137,74 @@ describe('HeroEmbed', () => {
             await Promise.resolve();
         });
     });
+
+    it('renders a video hero and a video carousel slide', async () => {
+        const getPublicFileById = jest.fn().mockResolvedValue({data: {file_path: 'clip.mp4'}});
+        render(
+                <RendererProvider value={makeRuntime(getPublicFileById)}>
+                    <HeroEmbed fileId={9} title="Video Hero" heroType="video"/>
+                </RendererProvider>
+        );
+        await waitFor(() => expect(document.querySelector('video[src="/hero/clip.mp4"]')).toBeInTheDocument());
+
+        const runtime = makeRuntime(jest.fn());
+        runtime.pageAPI.getPublicGalleryFiles = jest.fn().mockResolvedValue({
+            data: {content: [{id: 2, file_path: 'first.mp4', mimetype: 'video/mp4'}], page: 0, total_pages: 1},
+        });
+        render(
+                <RendererProvider value={runtime}>
+                    <HeroEmbed fileId={10} title="Video Carousel" heroType="carousel"/>
+                </RendererProvider>
+        );
+        await waitFor(() => expect(document.querySelector('video[src="/hero/first.mp4"]')).toBeInTheDocument());
+    });
+
+    it('reports a missing gallery API for carousel heroes and tolerates an empty gallery answer', async () => {
+        const runtime = makeRuntime(jest.fn());
+        runtime.pageAPI.getPublicGalleryFiles = undefined;
+        render(
+                <RendererProvider value={runtime}>
+                    <HeroEmbed fileId={11} title="No API" heroType="carousel"/>
+                </RendererProvider>
+        );
+        await waitFor(() => expect(screen.getByText('Gallery media API is not configured.')).toBeInTheDocument());
+
+        const emptyRuntime = makeRuntime(jest.fn());
+        emptyRuntime.pageAPI.getPublicGalleryFiles = jest.fn().mockResolvedValue({data: null});
+        render(
+                <RendererProvider value={emptyRuntime}>
+                    <HeroEmbed fileId={12} title="Empty" heroType="carousel"/>
+                </RendererProvider>
+        );
+        await waitFor(() => expect(emptyRuntime.pageAPI.getPublicGalleryFiles).toHaveBeenCalled());
+        expect(screen.queryByAltText('Empty')).toBeNull();
+    });
+
+    it('follows the carousel to the next slide', async () => {
+        const runtime = makeRuntime(jest.fn());
+        runtime.pageAPI.getPublicGalleryFiles = jest.fn().mockResolvedValue({
+            data: {
+                content: [
+                    {id: 1, file_path: 'one.jpg', mimetype: 'image/jpeg'},
+                    {id: 2, file_path: 'two.jpg', mimetype: 'image/jpeg'},
+                ],
+                page: 0,
+                total_pages: 1,
+            },
+        });
+        render(
+                <RendererProvider value={runtime}>
+                    <HeroEmbed fileId={13} title="Sliding" heroType="carousel"/>
+                </RendererProvider>
+        );
+        await waitFor(() => expect(document.querySelector('img[src="/hero/one.jpg"]')).toBeInTheDocument());
+
+        const dots = document.querySelectorAll('.slick-dots li button');
+        expect(dots.length).toBeGreaterThan(1);
+        await act(async () => {
+            (dots[1] as HTMLElement).click();
+            await new Promise((resolve) => setTimeout(resolve, 50));
+        });
+        await waitFor(() => expect(document.querySelector('img[src="/hero/two.jpg"]')).toBeInTheDocument());
+    });
 });
