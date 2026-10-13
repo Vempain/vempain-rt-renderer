@@ -80,4 +80,22 @@ describe('TodayRandomEmbed', () => {
         expect(screen.getByRole('img', {name: /image a/i})).toBeInTheDocument();
         expect(screen.getByRole('link', {name: /page a/i})).toHaveAttribute('href', '/pages/page-a');
     });
+
+    it('shows a dash for a missing publish date and the raw text for an unparseable one', () => {
+        render(
+                <MemoryRouter>
+                    <RendererProvider value={runtime}>
+                        <TodayRandomEmbed
+                                options={{
+                                    images: [{id: 1, title: 'Undated', file_path: 'u.jpg', published: null}],
+                                    pages: [{id: 10, title: 'Odd date', file_path: 'odd', header: null, published: 'not-a-date'}],
+                                }}
+                        />
+                    </RendererProvider>
+                </MemoryRouter>,
+        );
+
+        expect(screen.getByText('-')).toBeInTheDocument();
+        expect(screen.getByText('not-a-date')).toBeInTheDocument();
+    });
 });

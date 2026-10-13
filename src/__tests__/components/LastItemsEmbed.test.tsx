@@ -322,3 +322,67 @@ describe('LastItemsEmbed – error and body-stripping', () => {
         expect(screen.getByText('Page with failing hero')).toBeInTheDocument();
     });
 });
+
+describe('LastItemsEmbed – unmount and fallback paths', () => {
+    it('skips the hero thumbnail when the gallery API is not configured for a carousel hero', async () => {
+        const getLastItems = jest.fn().mockResolvedValue(makeResponse('pages', [
+            {id: 7, title: 'Carousel without API', published: null, file_path: '/page/c', body: '<!--vps:embed:hero:1084:type:carousel-->', header: null},
+        ]));
+        renderWithAll('pages', 1, getLastItems, jest.fn(), undefined);
+        await flush();
+        expect(screen.getByText('Carousel without API')).toBeInTheDocument();
+        expect(document.querySelector('img')).toBeNull();
+    });
+
+    it('ignores list and thumbnail answers that arrive after unmount', async () => {
+        let resolveList: (value: unknown) => void = () => undefined;
+        const getLastItems = jest.fn(() => new Promise((resolve) => {
+            resolveList = resolve;
+        }));
+        const {unmount} = renderWithAll('pages', 1, getLastItems);
+        unmount();
+        resolveList(makeResponse('pages', [{id: 1, title: 'Late', published: null, file_path: '/late', body: '', header: null}]));
+        await flush();
+
+        let rejectList: (reason: unknown) => void = () => undefined;
+        const failing = jest.fn(() => new Promise((_, reject) => {
+            rejectList = reject;
+        }));
+        const second = renderWithAll('pages', 1, failing);
+        second.unmount();
+        rejectList(new Error('late failure'));
+        await flush();
+
+        let resolveFile: (value: unknown) => void = () => undefined;
+        let rejectFile: (reason: unknown) => void = () => undefined;
+        const heroBody = '<!--vps:embed:hero:99-->';
+        const slowFile = jest.fn()
+                .mockImplementationOnce(() => new Promise((resolve) => {
+                    resolveFile = resolve;
+                }))
+                .mockImplementationOnce(() => new Promise((_, reject) => {
+                    rejectFile = reject;
+                }));
+        const items = makeResponse('pages', [
+            {id: 50, title: 'Hero one', published: null, file_path: '/one', body: heroBody, header: null},
+            {id: 51, title: 'Hero two', published: null, file_path: '/two', body: heroBody, header: null},
+        ]);
+        const third = renderWithAll('pages', 2, jest.fn().mockResolvedValue(items), slowFile);
+        await flush();
+        expect(screen.getByText('Hero one')).toBeInTheDocument();
+        third.unmount();
+        resolveFile({data: {file_path: 'late.jpg'}});
+        rejectFile(new Error('late'));
+        await flush();
+        expect(document.querySelector('img[src="/files/late.jpg"]')).toBeNull();
+    });
+
+    it('links "view all" to the root for an unknown item type', async () => {
+        const getLastItems = jest.fn().mockResolvedValue(makeResponse('documents', [
+            {id: 3, title: 'Odd', published: null, file_path: 'odd.pdf', gallery_id: null},
+        ]));
+        renderWithAll('unknown' as LastEmbedType, 1, getLastItems);
+        await flush();
+        expect(screen.getByText('View all unknown')).toHaveAttribute('href', '/');
+    });
+});
