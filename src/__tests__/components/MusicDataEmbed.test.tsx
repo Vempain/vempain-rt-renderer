@@ -209,7 +209,7 @@ describe('MusicDataEmbed', () => {
         await flush();
 
         // Find the pagination and click page 2
-        const page2 = screen.queryByTitle('2');
+        const page2 = screen.queryByRole('button', {name: 'Page 2'});
         if (page2) {
             fireEvent.click(page2);
             await flush();
@@ -240,4 +240,3 @@ describe('MusicDataEmbed', () => {
         expect(getMusicData).toBeDefined();
     });
 });
-
